@@ -5,6 +5,8 @@ var port = process.env.PORT || 3000;
 var bodyParser = require('body-parser');
 
 const GroceryItemRouter = require('./GroceryItem/GroceryItemRoute');
+const GroceryListRouter = require('./GroceryList/GroceryListRoute');
+
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -18,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/', router);
 
 router.use('/GroceryItem', GroceryItemRouter);
+router.use('/GroceryList', GroceryListRouter);
 
 app.listen(port, function () {
   console.log('Frigg app listening on port ' + port);
