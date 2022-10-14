@@ -16,8 +16,7 @@ var GroceryService = {
             if (!groceryItem) {
                 throw new Error("Grocery Item not found");
             }
-            this.DeleteProperties(groceryItem);
-            return groceryItem;
+            return {message: "Grocery item deleted"};
         } catch (error) {
             throw error;
         }

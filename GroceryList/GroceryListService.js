@@ -41,8 +41,6 @@ var GroceryService = {
                 }
             }
             DeleteProperties(groceryItem);
-            console.log("in service");
-            console.log(groceryItem.dataValues);
             return groceryItem.dataValues;
         } catch (error) {
             throw error;

@@ -59,17 +59,10 @@ async function ReduceGroceryItemQuantityByOneOrDelete(fridgeId, groceryItemId) {
         });
         if (groceryListItem !== undefined && groceryListItem !== null) {
             if( parseFloat(groceryListItem.quantity) > 1) {
-            console.log("in if");
-
-                console.log(groceryListItem.quantity);
                 groceryListItem.quantity = parseFloat(groceryListItem.quantity) - 1;
                 await groceryListItem.save();
-                console.log(groceryListItem);
                 return groceryListItem;
             } else {
-            console.log("in else");
-
-                console.log(groceryListItem);
                 await groceryListItem.destroy();
                 return groceryListItem;
             }

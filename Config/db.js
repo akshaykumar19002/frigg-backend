@@ -43,6 +43,11 @@ db.Sequelize = Sequelize;
 
 
 // Associations 
+db.user.hasMany(db.fridge_user);
+db.fridge.hasMany(db.fridge_user);
+db.fridge_user.belongsTo(db.user);
+db.fridge_user.belongsTo(db.fridge);
+
 db.grocery_item.hasMany(db.grocery_list);
 db.grocery_list.belongsTo(db.grocery_item);
 
