@@ -12,9 +12,12 @@ var GroceryService = {
     },
     RemoveGroceryItem: async function (id) {
         try {
-            var response = await GroceryItemDB.DeleteGroceryItem(id);
-            this.DeleteProperties(response);
-            return response;
+            var groceryItem = await GroceryItemDB.DeleteGroceryItem(id);
+            if (!groceryItem) {
+                throw new Error("Grocery Item not found");
+            }
+            this.DeleteProperties(groceryItem);
+            return groceryItem;
         } catch (error) {
             throw error;
         }
@@ -32,9 +35,12 @@ var GroceryService = {
     },
     GetGroceryItemById: async function (id) {
         try {
-            var response = await GroceryItemDB.GetGroceryItemById(id);
-            this.DeleteProperties(response);
-            return response;
+            var groceryItem = await GroceryItemDB.GetGroceryItemById(id);
+            if (!groceryItem) {
+                throw new Error("Grocery Item not found");
+            }
+            this.DeleteProperties(groceryItem);
+            return groceryItem;
         } catch (error) {
             throw error;
         }

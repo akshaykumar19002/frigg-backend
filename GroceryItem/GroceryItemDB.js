@@ -12,6 +12,11 @@ async function CreateGroceryItem(name) {
         if (groceryItem) {
             groceryItem.restore();
             return groceryItem;
+        } else {
+            const groceryItem = await db.grocery_item.create({
+                name: name
+            });
+            return groceryItem;
         }
     } catch (error) {
         console.log(error);
