@@ -25,9 +25,8 @@ router.post('/', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         // TODO: change hardcoded fridge id with dynamic value
-        const groceryItem = await GroceryListService.DeleteGroceryItem(1, req.params.id);
-        // TODO: Give appropriate message in response if all items are deleted
-        res.status(200).send(groceryItem);
+        const response = await GroceryListService.DeleteGroceryItem(1, req.params.id);
+            res.status(200).send(response);
     } catch (error) {
         res.status(500).send(error.message);
     }

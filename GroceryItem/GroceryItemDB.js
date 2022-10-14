@@ -1,12 +1,18 @@
 const sequelize = require('sequelize');
-const GroceryItem = require('./GroceryItemModel');
+const db = require('../Config/db');
 
 async function CreateGroceryItem(name) {
     try {
-        const groceryItem = await GroceryItem.create({
-            name: name,
+        const groceryItem = await db.grocery_item.findOne({
+            where: {
+                name: name
+            },
+            paranoid: false,
         });
-        return groceryItem;
+        if (groceryItem) {
+            groceryItem.restore();
+            return groceryItem;
+        }
     } catch (error) {
         console.log(error);
     }
@@ -14,7 +20,7 @@ async function CreateGroceryItem(name) {
 
 async function DeleteGroceryItem(id) {
     try {
-        const groceryItem = await GroceryItem.destroy({
+        const groceryItem = await db.grocery_item.destroy({
             where: {
                 id: id
             }
@@ -27,7 +33,7 @@ async function DeleteGroceryItem(id) {
 
 async function GetAllGroceryItems() {
     try {
-        const groceryItems = await GroceryItem.findAll();
+        const groceryItems = await db.grocery_item.findAll();
         return groceryItems;
     } catch (error) {
         console.log(error);
@@ -36,7 +42,7 @@ async function GetAllGroceryItems() {
 
 async function GetGroceryItemById(id) {
     try {
-        const groceryItem = await GroceryItem.findByPk(id);
+        const groceryItem = await db.grocery_item.findByPk(id);
         return groceryItem;
     } catch (error) {
         console.log(error);

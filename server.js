@@ -1,11 +1,10 @@
 const express = require('express');
 var app = express();
 var router = express.Router();
-var port = process.env.PORT || 3000;
 var bodyParser = require('body-parser');
 
-const GroceryItemRouter = require('./GroceryItem/GroceryItemRoute');
-const GroceryListRouter = require('./GroceryList/GroceryListRoute');
+const db = require('./Config/db');
+var port = process.env.PORT || 3000;
 
 
 app.use(function(req, res, next) {
@@ -14,14 +13,32 @@ app.use(function(req, res, next) {
   next();
 });
 
+
+const GroceryItemRouter = require('./GroceryItem/GroceryItemRoute');
+const GroceryListRouter = require('./GroceryList/GroceryListRoute');
+
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+
 
 app.use('/', router);
 
 router.use('/GroceryItem', GroceryItemRouter);
 router.use('/GroceryList', GroceryListRouter);
 
-app.listen(port, function () {
-  console.log('Frigg app listening on port ' + port);
-});
+
+
+
+
+db.sequelize.sync()
+  .then(() => {
+    app.listen(port, function () {
+      console.log('Frigg app listening on port ' + port);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  })
