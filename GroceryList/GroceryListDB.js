@@ -32,7 +32,6 @@ async function AddOrIncreaseGroceryItemQuantityByOne(fridgeId, groceryItemId) {
     };
 };
 
-// TODO: change the reference in the db. replace name in 
 async function GetGroceryListByFridgeId(fridgeId) {
     try {
         const groceryList = await db.grocery_list.findAll({
