@@ -1,32 +1,24 @@
-const Sequelize = require('sequelize');
-const db = require('../config/db');
-
-const GroceryList = db.define('grocery_list', {
-    id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    fridge_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    grocery_item_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    quantity: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    createdAt: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
-    },
-    updatedAt: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
-    }
-});
-
-module.exports = GroceryList;
+module.exports = (sequelize, DataTypes) => {
+    return sequelize.define('grocery_list', {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        fridge_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        grocery_item_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        quantity: {
+            type: DataTypes.DECIMAL,
+            allowNull: false
+        },
+    }, {
+        underscored: true,
+        paranoid: true,
+    });
+}

@@ -11,6 +11,7 @@ router.get('/', async (req, res) => {
     }
 });
 
+// TODO: add code to upload image to s3.
 router.post('/', async (req, res) => {
     try {
         const groceryItem = await GroceryItemService.AddGroceryItem(req.body.name);
@@ -22,10 +23,14 @@ router.post('/', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        await GroceryItemService.RemoveGroceryItem(req.params.id);
-        res.status(200);
+        const groceryItem = await GroceryItemService.RemoveGroceryItem(req.params.id);
+        res.status(200).send({ message: 'Grocery Item deleted' });
     } catch (error) {
-        res.status(500).send(error.message);
+        if (error.message === 'Grocery Item not found') {
+            res.status(404).send({message: error.message});
+        } else {
+            res.status(500).send(error.message);
+        }
     }
 });
 
@@ -34,7 +39,11 @@ router.get('/:id', async (req, res) => {
         const groceryItem = await GroceryItemService.GetGroceryItemById(req.params.id);
         res.status(200).send(groceryItem);
     } catch (error) {
-        res.status(500).send(error.message);
+        if (error.message === 'Grocery Item not found') {
+            res.status(404).send({message: error.message});
+        } else {
+            res.status(500).send(error.message);
+        }
     }
 });
 

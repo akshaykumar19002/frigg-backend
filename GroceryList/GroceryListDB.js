@@ -1,20 +1,26 @@
-const sequelize = require('sequelize');
-const GroceryList = require('./GroceryListModel');
+const db = require('../Config/db')
 
 async function AddOrIncreaseGroceryItemQuantityByOne(fridgeId, groceryItemId) {
     try {
-        const groceryList = await GroceryList.findOne({
+        const groceryList = await db.grocery_list.findOne({
             where: {
                 fridge_id: fridgeId,
                 grocery_item_id: groceryItemId
-            }
-        })
+            },
+            paranoid: false
+        });
         if (groceryList) {
-            groceryList.quantity += 1;
-            await groceryList.save();
-            return groceryList;
+            if(groceryList.deletedAt === null) {
+                groceryList.quantity = parseFloat(groceryList.quantity) + 1;
+                await groceryList.save();
+                return groceryList;
+            } else {
+                await groceryList.restore();
+                await groceryList.save();
+                return groceryList;
+            }
         } else {
-            const groceryList = await GroceryList.create({
+            const groceryList = await db.grocery_list.create({
                 fridge_id: fridgeId,
                 grocery_item_id: groceryItemId,
                 quantity: 1
@@ -28,10 +34,14 @@ async function AddOrIncreaseGroceryItemQuantityByOne(fridgeId, groceryItemId) {
 
 async function GetGroceryListByFridgeId(fridgeId) {
     try {
-        const groceryList = await GroceryList.findAll({
+        const groceryList = await db.grocery_list.findAll({
             where: {
                 fridge_id: fridgeId
-            }
+            },
+            include: [{
+                model: db.grocery_item,
+                attributes: ['name']
+            }]
         });
         return groceryList;
     } catch (error) {
@@ -41,18 +51,29 @@ async function GetGroceryListByFridgeId(fridgeId) {
 
 async function ReduceGroceryItemQuantityByOneOrDelete(fridgeId, groceryItemId) {
     try {
-        const groceryList = await GroceryList.findOne({
+        const groceryListItem = await db.grocery_list.findOne({
             where: {
                 fridge_id: fridgeId,
                 grocery_item_id: groceryItemId
             }
         });
-        if (groceryList.quantity > 1) {
-            groceryList.quantity -= 1;
-            await groceryList.save();
-            return groceryList;
+        if (groceryListItem !== undefined && groceryListItem !== null) {
+            if( parseFloat(groceryListItem.quantity) > 1) {
+            console.log("in if");
+
+                console.log(groceryListItem.quantity);
+                groceryListItem.quantity = parseFloat(groceryListItem.quantity) - 1;
+                await groceryListItem.save();
+                console.log(groceryListItem);
+                return groceryListItem;
+            } else {
+            console.log("in else");
+
+                console.log(groceryListItem);
+                await groceryListItem.destroy();
+                return groceryListItem;
+            }
         } else {
-            await groceryList.destroy();
             return null;
         }
     } catch (error) {
