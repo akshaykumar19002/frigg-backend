@@ -74,6 +74,7 @@ async function ReduceGroceryItemQuantityByOneOrDelete(fridgeId, groceryItemId) {
     };
 };
 
+// TODO: when i get the groceryitemlist, change the type of quantity from string to int
 async function UpdateGroceryListByFridgeIdAndGroceryItemslist(fridgeId, groceryItemsList) {
     try {
         const groceryList = await db.grocery_list.findAll({
@@ -83,15 +84,25 @@ async function UpdateGroceryListByFridgeIdAndGroceryItemslist(fridgeId, groceryI
         });
         if (groceryList !== undefined && groceryList !== null) {
             for (let i = 0; i < groceryList.length; i++) {
-                const groceryItem = groceryItemsList.find(groceryItem => groceryItem.id === groceryList[i].grocery_item_id);
+                const groceryItem = groceryItemsList.find(groceryItem => groceryItem.grocery_item_id === parseInt(groceryList[i].grocery_item_id));
                 if (groceryItem !== undefined && groceryItem !== null) {
-                    groceryList[i].quantity = groceryItem.quantity;
+                    groceryList[i].quantity = parseInt(groceryItem.quantity);
                     await groceryList[i].save();
                 } else {
                     await groceryList[i].destroy();
                 }
             }
-            return groceryList;
+            for (let i = 0; i < groceryItemsList.length; i++) {
+                const groceryItem = groceryList.find(groceryItem => groceryItem.grocery_item_id === parseInt(groceryItemsList[i].grocery_item_id));
+                if (groceryItem === undefined || groceryItem === null) {
+                    await db.grocery_list.create({
+                        fridge_id: fridgeId,
+                        grocery_item_id: groceryItemsList[i].grocery_item_id,
+                        quantity: parseInt(groceryItemsList[i].quantity)
+                    });
+                }
+            }
+            return true;
         } else {
             return null;
         }

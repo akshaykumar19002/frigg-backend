@@ -89,16 +89,13 @@ var GroceryService = {
     },
     UpdateGroceryListByGroceryItemslist: async function (fridgeId, groceryItemsList) {
         try {
-            var groceryList = await GroceryItemDB.UpdateGroceryListByFridgeIdAndGroceryItemslist(fridgeId, groceryItemsList);
-            if (!groceryList) {
+            var groceryUpdated = await GroceryItemDB.UpdateGroceryListByFridgeIdAndGroceryItemslist(fridgeId, groceryItemsList);
+            if (!groceryUpdated) {
                 return {
                     message: "No item in grocery list"
                 }
             }
-            groceryList.forEach(element => {
-                DeleteProperties(element);
-            });
-            return groceryList;
+            return groceryUpdated;
         } catch (error) {
             throw error;
         }
