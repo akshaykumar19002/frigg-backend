@@ -14,7 +14,6 @@ app.use(function(req, res, next) {
 
 const GroceryItemRouter = require('./GroceryItem/GroceryItemRoute');
 const GroceryListRouter = require('./GroceryList/GroceryListRoute');
-const FridgeRouter = require('./Fridge/FridgeRoute');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -23,7 +22,7 @@ app.use('/', router);
 
 router.use('/GroceryItem', GroceryItemRouter);
 router.use('/GroceryList', GroceryListRouter);
-router.use('/Fridge', FridgeRouter);
+// router.use('/Fridge', FridgeRouter);
 
 db.sequelize.sync()
   .then(() => {
