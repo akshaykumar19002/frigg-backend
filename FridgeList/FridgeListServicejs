@@ -1,0 +1,27 @@
+const FridgeItemDB = require('./FridgeListDB');
+
+var FridgeService = {
+    GetAllFridgeListByFridgeId: async function (fridgeId) {
+        try {
+            return await FridgeItemDB.GetFridgeListByFridgeId(fridgeId);
+        } catch (error) {
+            throw error;
+        }
+    },
+    AddFridgeItem: async function (fridgeId, FridgeItemId) {
+        try {
+            return await FridgeItemDB.AddOrIncreaseFridgeItemQuantityByOne(fridgeId, FridgeItemId);
+        } catch (error) {
+            throw error;
+        }
+    },
+    DeleteFridgeItem: async function (fridgeId, FridgeItemId) {
+        try {
+            return await FridgeItemDB.ReduceFridgeItemQuantityByOneOrDelete(fridgeId, FridgeItemId);
+        } catch (error) {
+            throw error;
+        }
+    }
+};
+
+module.exports = FridgeService;
