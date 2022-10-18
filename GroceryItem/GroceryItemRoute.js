@@ -5,7 +5,11 @@ const GroceryItemService = require('./GroceryItemService');
 router.get('/', async (req, res) => {
     try {
         const groceryItems = await GroceryItemService.GetAllGroceryItems();
-        res.status(200).send(groceryItems);
+        if (groceryItems.length === 0) {
+            res.status(200).send({message: 'No Grocery items'});
+        } else {
+            res.status(200).send(groceryItems);
+        }
     } catch (error) {
         res.status(500).send(error.message);
     }

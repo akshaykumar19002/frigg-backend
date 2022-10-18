@@ -74,10 +74,36 @@ async function ReduceGroceryItemQuantityByOneOrDelete(fridgeId, groceryItemId) {
     };
 };
 
+async function UpdateGroceryListByFridgeIdAndGroceryItemslist(fridgeId, groceryItemsList) {
+    try {
+        const groceryList = await db.grocery_list.findAll({
+            where: {
+                fridge_id: fridgeId
+            }
+        });
+        if (groceryList !== undefined && groceryList !== null) {
+            for (let i = 0; i < groceryList.length; i++) {
+                const groceryItem = groceryItemsList.find(groceryItem => groceryItem.id === groceryList[i].grocery_item_id);
+                if (groceryItem !== undefined && groceryItem !== null) {
+                    groceryList[i].quantity = groceryItem.quantity;
+                    await groceryList[i].save();
+                } else {
+                    await groceryList[i].destroy();
+                }
+            }
+            return groceryList;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.log(error);
+    };
+};
 
 
 module.exports = {
     GetGroceryListByFridgeId,
     AddOrIncreaseGroceryItemQuantityByOne,
-    ReduceGroceryItemQuantityByOneOrDelete
+    ReduceGroceryItemQuantityByOneOrDelete,
+    UpdateGroceryListByFridgeIdAndGroceryItemslist
 }
