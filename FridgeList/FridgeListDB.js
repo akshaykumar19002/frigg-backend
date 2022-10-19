@@ -1,40 +1,41 @@
-const db = require('../Config/db')
+const db = require('../Config/db');
 
 async function AddOrIncreaseGroceryItemQuantityByOne(fridgeId, groceryItemId) {
     try {
-        const groceryList = await db.grocery_list.findOne({
+        const groceryListItem = await db.fridge_list.findOne({
             where: {
                 fridge_id: fridgeId,
                 grocery_item_id: groceryItemId
             },
             paranoid: false
         });
-        if (groceryList) {
-            if(groceryList.deletedAt === null) {
-                groceryList.quantity = parseFloat(groceryList.quantity) + 1;
-                await groceryList.save();
-                return groceryList;
+        if (groceryListItem) {
+            if(groceryListItem.deletedAt === null) {
+                groceryListItem.quantity = parseFloat(groceryListItem.quantity) + 1;
+                await groceryListItem.save();
+                return groceryListItem;
             } else {
-                await groceryList.restore();
-                await groceryList.save();
-                return groceryList;
+                await groceryListItem.restore();
+                groceryListItem.quantity = 1;
+                await groceryListItem.save();
+                return groceryListItem;
             }
         } else {
-            const groceryList = await db.grocery_list.create({
+            const groceryItem = await db.fridge_list.create({
                 fridge_id: fridgeId,
                 grocery_item_id: groceryItemId,
                 quantity: 1
             });
-            return groceryList;
+            return groceryItem;
         }
     } catch (error) {
         console.log(error);
     };
 };
 
-async function GetGroceryListByFridgeId(fridgeId) {
+async function GetFridgeListByFridgeId(fridgeId) {
     try {
-        const groceryList = await db.grocery_list.findAll({
+        const fridgeList = await db.fridge_list.findAll({
             where: {
                 fridge_id: fridgeId
             },
@@ -43,7 +44,7 @@ async function GetGroceryListByFridgeId(fridgeId) {
                 attributes: ['name']
             }]
         });
-        return groceryList;
+        return fridgeList;
     } catch (error) {
         console.log(error);
     };
@@ -51,7 +52,7 @@ async function GetGroceryListByFridgeId(fridgeId) {
 
 async function ReduceGroceryItemQuantityByOneOrDelete(fridgeId, groceryItemId) {
     try {
-        const groceryListItem = await db.grocery_list.findOne({
+        const groceryListItem = await db.fridge_list.findOne({
             where: {
                 fridge_id: fridgeId,
                 grocery_item_id: groceryItemId
@@ -64,7 +65,7 @@ async function ReduceGroceryItemQuantityByOneOrDelete(fridgeId, groceryItemId) {
                 return groceryListItem;
             } else {
                 await groceryListItem.destroy();
-                return groceryListItem;
+                return true;
             }
         } else {
             return null;
@@ -75,34 +76,34 @@ async function ReduceGroceryItemQuantityByOneOrDelete(fridgeId, groceryItemId) {
 };
 
 // TODO: when i get the groceryitemlist, change the type of quantity from string to int
-async function UpdateGroceryListByFridgeIdAndGroceryItemslist(fridgeId, groceryItemsList) {
+async function UpdateFridgeListByFridgeIdAndGroceryItemslist(fridgeId, groceryItemsList) {
     try {
-        const groceryList = await db.grocery_list.findAll({
+        const fridgeList = await db.fridge_list.findAll({
             where: {
                 fridge_id: fridgeId
             },
             paranoid: false
         });
-        if (groceryList !== undefined && groceryList !== null) {
-            for (let i = 0; i < groceryList.length; i++) {
-                const groceryItem = groceryItemsList.find(groceryItem => groceryItem.grocery_item_id === parseInt(groceryList[i].grocery_item_id));
+        if (fridgeList !== undefined && fridgeList !== null) {
+            for (let i = 0; i < fridgeList.length; i++) {
+                const groceryItem = groceryItemsList.find(groceryItem => groceryItem.grocery_item_id === parseInt(fridgeList[i].grocery_item_id));
                 if (groceryItem !== undefined && groceryItem !== null) {
-                    if(groceryList[i].deletedAt === null) {
-                        groceryList[i].quantity = parseInt(groceryItem.quantity);
-                        await groceryList[i].save();
+                    if(fridgeList[i].deletedAt === null) {
+                        fridgeList[i].quantity = parseInt(groceryItem.quantity);
+                        await fridgeList[i].save();
                     } else {
-                        await groceryList[i].restore();
-                        groceryList[i].quantity = parseInt(groceryItem.quantity);
-                        await groceryList[i].save();
+                        await fridgeList[i].restore();
+                        fridgeList[i].quantity = parseInt(groceryItem.quantity);
+                        await fridgeList[i].save();
                     }
                 } else {
-                    await groceryList[i].destroy();
+                    await fridgeList[i].destroy();
                 }
             }
             for (let i = 0; i < groceryItemsList.length; i++) {
-                const groceryItem = groceryList.find(groceryItem => groceryItem.grocery_item_id === parseInt(groceryItemsList[i].grocery_item_id));
+                const groceryItem = fridgeList.find(groceryItem => groceryItem.grocery_item_id === parseInt(groceryItemsList[i].grocery_item_id));
                 if (groceryItem === undefined || groceryItem === null) {
-                    await db.grocery_list.create({
+                    await db.fridge_list.create({
                         fridge_id: fridgeId,
                         grocery_item_id: groceryItemsList[i].grocery_item_id,
                         quantity: parseInt(groceryItemsList[i].quantity)
@@ -120,8 +121,8 @@ async function UpdateGroceryListByFridgeIdAndGroceryItemslist(fridgeId, groceryI
 
 
 module.exports = {
-    GetGroceryListByFridgeId,
+    GetFridgeListByFridgeId,
     AddOrIncreaseGroceryItemQuantityByOne,
     ReduceGroceryItemQuantityByOneOrDelete,
-    UpdateGroceryListByFridgeIdAndGroceryItemslist
+    UpdateFridgeListByFridgeIdAndGroceryItemslist
 }
