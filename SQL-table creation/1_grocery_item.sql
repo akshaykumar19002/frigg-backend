@@ -1,4 +1,4 @@
-CREATE TABLE `grocery_items` (
+CREATE TABLE `food_items` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `imagePath` varchar(500) DEFAULT NULL,

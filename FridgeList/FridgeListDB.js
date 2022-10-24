@@ -1,11 +1,11 @@
 const db = require('../Config/db');
 
-async function AddOrIncreaseGroceryItemQuantityByOne(fridgeId, groceryItemId) {
+async function AddOrIncreaseFoodItemQuantityByOne(fridgeId, foodItemId) {
     try {
         const groceryListItem = await db.fridge_list.findOne({
             where: {
                 fridge_id: fridgeId,
-                grocery_item_id: groceryItemId
+                food_item_id: foodItemId
             },
             paranoid: false
         });
@@ -21,12 +21,12 @@ async function AddOrIncreaseGroceryItemQuantityByOne(fridgeId, groceryItemId) {
                 return groceryListItem;
             }
         } else {
-            const groceryItem = await db.fridge_list.create({
+            const foodItem = await db.fridge_list.create({
                 fridge_id: fridgeId,
-                grocery_item_id: groceryItemId,
+                food_item_id: foodItemId,
                 quantity: 1
             });
-            return groceryItem;
+            return foodItem;
         }
     } catch (error) {
         console.log(error);
@@ -40,7 +40,7 @@ async function GetFridgeListByFridgeId(fridgeId) {
                 fridge_id: fridgeId
             },
             include: [{
-                model: db.grocery_item,
+                model: db.food_item,
                 attributes: ['name']
             }]
         });
@@ -50,12 +50,12 @@ async function GetFridgeListByFridgeId(fridgeId) {
     };
 };
 
-async function ReduceGroceryItemQuantityByOneOrDelete(fridgeId, groceryItemId) {
+async function ReduceFoodItemQuantityByOneOrDelete(fridgeId, foodItemId) {
     try {
         const groceryListItem = await db.fridge_list.findOne({
             where: {
                 fridge_id: fridgeId,
-                grocery_item_id: groceryItemId
+                food_item_id: foodItemId
             }
         });
         if (groceryListItem !== undefined && groceryListItem !== null) {
@@ -75,8 +75,8 @@ async function ReduceGroceryItemQuantityByOneOrDelete(fridgeId, groceryItemId) {
     };
 };
 
-// TODO: when i get the groceryitemlist, change the type of quantity from string to int
-async function UpdateFridgeListByFridgeIdAndGroceryItemslist(fridgeId, groceryItemsList) {
+// TODO: when i get the fooditemlist, change the type of quantity from string to int
+async function UpdateFridgeListByFridgeIdAndFoodItemslist(fridgeId, foodItemsList) {
     try {
         const fridgeList = await db.fridge_list.findAll({
             where: {
@@ -86,27 +86,27 @@ async function UpdateFridgeListByFridgeIdAndGroceryItemslist(fridgeId, groceryIt
         });
         if (fridgeList !== undefined && fridgeList !== null) {
             for (let i = 0; i < fridgeList.length; i++) {
-                const groceryItem = groceryItemsList.find(groceryItem => groceryItem.grocery_item_id === parseInt(fridgeList[i].grocery_item_id));
-                if (groceryItem !== undefined && groceryItem !== null) {
+                const foodItem = foodItemsList.find(foodItem => foodItem.food_item_id === parseInt(fridgeList[i].food_item_id));
+                if (foodItem !== undefined && foodItem !== null) {
                     if(fridgeList[i].deletedAt === null) {
-                        fridgeList[i].quantity = parseInt(groceryItem.quantity);
+                        fridgeList[i].quantity = parseInt(foodItem.quantity);
                         await fridgeList[i].save();
                     } else {
                         await fridgeList[i].restore();
-                        fridgeList[i].quantity = parseInt(groceryItem.quantity);
+                        fridgeList[i].quantity = parseInt(foodItem.quantity);
                         await fridgeList[i].save();
                     }
                 } else {
                     await fridgeList[i].destroy();
                 }
             }
-            for (let i = 0; i < groceryItemsList.length; i++) {
-                const groceryItem = fridgeList.find(groceryItem => groceryItem.grocery_item_id === parseInt(groceryItemsList[i].grocery_item_id));
-                if (groceryItem === undefined || groceryItem === null) {
+            for (let i = 0; i < foodItemsList.length; i++) {
+                const foodItem = fridgeList.find(foodItem => foodItem.food_item_id === parseInt(foodItemsList[i].food_item_id));
+                if (foodItem === undefined || foodItem === null) {
                     await db.fridge_list.create({
                         fridge_id: fridgeId,
-                        grocery_item_id: groceryItemsList[i].grocery_item_id,
-                        quantity: parseInt(groceryItemsList[i].quantity)
+                        food_item_id: foodItemsList[i].food_item_id,
+                        quantity: parseInt(foodItemsList[i].quantity)
                     });
                 }
             }
@@ -122,7 +122,7 @@ async function UpdateFridgeListByFridgeIdAndGroceryItemslist(fridgeId, groceryIt
 
 module.exports = {
     GetFridgeListByFridgeId,
-    AddOrIncreaseGroceryItemQuantityByOne,
-    ReduceGroceryItemQuantityByOneOrDelete,
-    UpdateFridgeListByFridgeIdAndGroceryItemslist
+    AddOrIncreaseFoodItemQuantityByOne,
+    ReduceFoodItemQuantityByOneOrDelete,
+    UpdateFridgeListByFridgeIdAndFoodItemslist
 }

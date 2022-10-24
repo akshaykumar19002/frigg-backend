@@ -1,4 +1,4 @@
-const GroceryItemDB = require('./GroceryListDB');
+const FoodItemDB = require('./GroceryListDB');
 
 function DeleteProperties(response) {
     delete response.dataValues.createdAt;
@@ -6,49 +6,10 @@ function DeleteProperties(response) {
     delete response.dataValues.deletedAt;
 }
 
-// GroceryList = sequelize.define('grocery_list', {
-//     id: {
-//         type: DataTypes.INTEGER,
-//         primaryKey: true,
-//         autoIncrement: true
-//     },
-//     fridge_id: {
-//         type: DataTypes.INTEGER,
-//         allowNull: false
-//     },
-//     grocery_item_id: {
-//         type: DataTypes.INTEGER,
-//         allowNull: false,
-//     },
-//     quantity: {
-//         type: DataTypes.DECIMAL,
-//         allowNull: false
-//     },
-// }, {
-//     underscored: true,
-//     paranoid: true,
-// });
-
-// const GroceryItem = sequelize.define('grocery_item', {
-//     id: {
-//         type: DataTypes.INTEGER,
-//         primaryKey: true,
-//         autoIncrement: true
-//     },
-//     name: {
-//         type: DataTypes.STRING,
-//         allowNull: false,
-//         unique: true
-//     }
-// }, {
-//     paranoid: true,
-//     underscored: true
-// });
-
 var GroceryService = {
     GetAllGroceryListByFridgeId: async function (fridgeId) {
         try {
-            let groceryList = await GroceryItemDB.GetGroceryListByFridgeId(fridgeId);
+            let groceryList = await FoodItemDB.GetGroceryListByFridgeId(fridgeId);
             if (groceryList === undefined || groceryList.length === 0) {
                 return {
                     message: "No item in grocery list"
@@ -56,40 +17,50 @@ var GroceryService = {
             }
             groceryList.forEach(groceryListItem => {
                 DeleteProperties(groceryListItem);
-                groceryListItem.dataValues.grocery_item_name = groceryListItem.dataValues.grocery_item.name;
-                delete groceryListItem.dataValues.grocery_item;
+                console.log(groceryListItem.dataValues.food_item);
+                groceryListItem.dataValues.food_item_name = groceryListItem.dataValues.food_item.name;
+                delete groceryListItem.dataValues.food_item;
             });
             return groceryList;
         } catch (error) {
             throw error;
         }
     },
-    AddGroceryItem: async function (fridgeId, groceryItemId) {
+    AddFoodItem: async function (fridgeId, foodItemId, quantity) {
         try {
-            var response = await GroceryItemDB.AddOrIncreaseGroceryItemQuantityByOne(fridgeId, groceryItemId);
-            DeleteProperties(response);
-            return response;
-        } catch (error) {
-            throw error;
-        }
-    },
-    DeleteGroceryItem: async function (fridgeId, groceryItemId) {
-        try {
-            var groceryItem = await GroceryItemDB.ReduceGroceryItemQuantityByOneOrDelete(fridgeId, groceryItemId);
-            if (!groceryItem) {
+            var itemAdded = await FoodItemDB.AddFoodItemInGroceryList(fridgeId, foodItemId, quantity);
+            if (!itemAdded) {
                 return {
-                    message: "Item already doesn't exist in the fridge"
+                    message: "Item already exists in the grocery list"
+                }
+            } else {
+                return {
+                    message: "Item added"
                 }
             }
-            DeleteProperties(groceryItem);
-            return groceryItem.dataValues;
         } catch (error) {
             throw error;
         }
     },
-    UpdateGroceryListByGroceryItemslist: async function (fridgeId, groceryItemsList) {
+    DeleteFoodItem: async function (fridgeId, foodItemId) {
         try {
-            var groceryUpdated = await GroceryItemDB.UpdateGroceryListByFridgeIdAndGroceryItemslist(fridgeId, groceryItemsList);
+            var isDeleted = await FoodItemDB.DeleteFoodItemInGroceryList(fridgeId, foodItemId);
+            if (!isDeleted) {
+                return {
+                    message: "Item already doesn't exist in the grocery list"
+                }
+            } else {
+                return {
+                    message: "Item deleted"
+                }
+            }
+        } catch (error) {
+            throw error;
+        }
+    },
+    UpdateGroceryListByFoodItemslist: async function (fridgeId, foodItemsList) {
+        try {
+            var groceryUpdated = await FoodItemDB.UpdateGroceryListByFridgeIdAndFoodItemslist(fridgeId, foodItemsList);
             if (!groceryUpdated) {
                 return {
                     message: "No item in grocery list"

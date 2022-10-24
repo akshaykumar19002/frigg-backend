@@ -15,29 +15,30 @@ var GroceryService = {
                     message: "No item in fridge list"
                 }
             }
+            console.log(fridgeList.length);
             fridgeList.forEach(groceryListItem => {
                 DeleteProperties(groceryListItem);
-                groceryListItem.dataValues.grocery_item_name = groceryListItem.dataValues.grocery_item.name;
-                delete groceryListItem.dataValues.grocery_item;
+                groceryListItem.dataValues.food_item_name = groceryListItem.dataValues.food_item.name;
+                delete groceryListItem.dataValues.food_item;
             });
             return fridgeList;
         } catch (error) {
             throw error;
         }
     },
-    AddGroceryItem: async function (fridgeId, groceryItemId) {
+    AddFoodItem: async function (fridgeId, foodItemId) {
         try {
-            var response = await FridgeItemDB.AddOrIncreaseGroceryItemQuantityByOne(fridgeId, groceryItemId);
+            var response = await FridgeItemDB.AddOrIncreaseFoodItemQuantityByOne(fridgeId, foodItemId);
             DeleteProperties(response);
             return response;
         } catch (error) {
             throw error;
         }
     },
-    DeleteGroceryItem: async function (fridgeId, groceryItemId) {
+    DeleteFoodItem: async function (fridgeId, foodItemId) {
         try {
-            var groceryItemDeleted = await FridgeItemDB.ReduceGroceryItemQuantityByOneOrDelete(fridgeId, groceryItemId);
-            if (!groceryItemDeleted) {
+            var foodItemDeleted = await FridgeItemDB.ReduceFoodItemQuantityByOneOrDelete(fridgeId, foodItemId);
+            if (!foodItemDeleted) {
                 return {
                     message: "Item already doesn't exist in the fridge"
                 }
@@ -49,9 +50,9 @@ var GroceryService = {
             throw error;
         }
     },
-    UpdateFridgeListByGroceryItemslist: async function (fridgeId, groceryItemsList) {
+    UpdateFridgeListByFoodItemslist: async function (fridgeId, foodItemsList) {
         try {
-            var groceryUpdated = await FridgeItemDB.UpdateFridgeListByFridgeIdAndGroceryItemslist(fridgeId, groceryItemsList);
+            var groceryUpdated = await FridgeItemDB.UpdateFridgeListByFridgeIdAndFoodItemslist(fridgeId, foodItemsList);
             if (!groceryUpdated) {
                 return {
                     message: "No item in fridge list"
