@@ -1,38 +1,5 @@
 const db = require('../Config/db');
 
-async function AddOrIncreaseFoodItemQuantityByOne(fridgeId, foodItemId) {
-    try {
-        const groceryListItem = await db.fridge_list.findOne({
-            where: {
-                fridge_id: fridgeId,
-                food_item_id: foodItemId
-            },
-            paranoid: false
-        });
-        if (groceryListItem) {
-            if(groceryListItem.deletedAt === null) {
-                groceryListItem.quantity = parseFloat(groceryListItem.quantity) + 1;
-                await groceryListItem.save();
-                return groceryListItem;
-            } else {
-                await groceryListItem.restore();
-                groceryListItem.quantity = 1;
-                await groceryListItem.save();
-                return groceryListItem;
-            }
-        } else {
-            const foodItem = await db.fridge_list.create({
-                fridge_id: fridgeId,
-                food_item_id: foodItemId,
-                quantity: 1
-            });
-            return foodItem;
-        }
-    } catch (error) {
-        console.log(error);
-    };
-};
-
 async function GetFridgeListByFridgeId(fridgeId) {
     try {
         const fridgeList = await db.fridge_list.findAll({
@@ -45,31 +12,6 @@ async function GetFridgeListByFridgeId(fridgeId) {
             }]
         });
         return fridgeList;
-    } catch (error) {
-        console.log(error);
-    };
-};
-
-async function ReduceFoodItemQuantityByOneOrDelete(fridgeId, foodItemId) {
-    try {
-        const groceryListItem = await db.fridge_list.findOne({
-            where: {
-                fridge_id: fridgeId,
-                food_item_id: foodItemId
-            }
-        });
-        if (groceryListItem !== undefined && groceryListItem !== null) {
-            if( parseFloat(groceryListItem.quantity) > 1) {
-                groceryListItem.quantity = parseFloat(groceryListItem.quantity) - 1;
-                await groceryListItem.save();
-                return groceryListItem;
-            } else {
-                await groceryListItem.destroy();
-                return true;
-            }
-        } else {
-            return null;
-        }
     } catch (error) {
         console.log(error);
     };
@@ -118,11 +60,44 @@ async function UpdateFridgeListByFridgeIdAndFoodItemslist(fridgeId, foodItemsLis
         console.log(error);
     };
 };
+async function AddFoodItemInFridgeList(fridgeId, foodItemId, quantity, purchaseDate, expectedExpiryDate) {
+    try {
+        const fridgeList = await db.fridge_list.findOne({
+            where: {
+                fridge_id: fridgeId,
+                food_item_id: foodItemId,
+                purchase_date: purchaseDate,
+                expected_expiry_date: expectedExpiryDate
+            }
+        });
+        if (fridgeList !== undefined && fridgeList !== null) {
+            if(fridgeList.deletedAt === null) {
+                fridgeList.quantity = parseInt(fridgeList.quantity) + parseInt(quantity);
+                await fridgeList.save();
+            } else {
+                await fridgeList.restore();
+                fridgeList.quantity = parseInt(quantity);
+                await fridgeList.save();
+            }
+        } else {
+            await db.fridge_list.create({
+                fridge_id: fridgeId,
+                food_item_id: foodItemId,
+                quantity: quantity,
+                purchase_date: purchaseDate,
+                expected_expiry_date: expectedExpiryDate
+            });
+        }
+        return true;
+    } catch (error) {
+        console.log(error);
+    };
+};
+
 
 
 module.exports = {
     GetFridgeListByFridgeId,
-    AddOrIncreaseFoodItemQuantityByOne,
-    ReduceFoodItemQuantityByOneOrDelete,
+    AddFoodItemInFridgeList,
     UpdateFridgeListByFridgeIdAndFoodItemslist
 }

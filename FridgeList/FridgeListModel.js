@@ -17,6 +17,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DECIMAL,
             allowNull: false
         },
+        purchase_date: {
+            type: DataTypes.DATE,
+            allowNull: true
+        },
+        expected_expiry_date: {
+            type: DataTypes.DATE,
+            allowNull: true
+        }
     }, {
         underscored: true,
         paranoid: true,

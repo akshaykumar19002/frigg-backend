@@ -5,7 +5,38 @@ function DeleteProperties(response) {
     delete response.dataValues.updatedAt;
     delete response.dataValues.deletedAt;
 }
-
+module.exports = (sequelize, DataTypes) => {
+    return sequelize.define('fridge_list', {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        fridge_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        food_item_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        quantity: {
+            type: DataTypes.DECIMAL,
+            allowNull: false
+        },
+        purchase_date: {
+            type: DataTypes.DATE,
+            allowNull: true
+        },
+        expected_expiry_date: {
+            type: DataTypes.DATE,
+            allowNull: true
+        }
+    }, {
+        underscored: true,
+        paranoid: true,
+    });
+}
 var GroceryService = {
     GetAllFridgeListByFridgeId: async function (fridgeId) {
         try {
@@ -26,26 +57,17 @@ var GroceryService = {
             throw error;
         }
     },
-    AddFoodItem: async function (fridgeId, foodItemId) {
+    AddFoodItem: async function (fridgeId, foodItemId, quantity, purchaseDate, expectedExpiryDate) {
         try {
-            var response = await FridgeItemDB.AddOrIncreaseFoodItemQuantityByOne(fridgeId, foodItemId);
-            DeleteProperties(response);
-            return response;
-        } catch (error) {
-            throw error;
-        }
-    },
-    DeleteFoodItem: async function (fridgeId, foodItemId) {
-        try {
-            var foodItemDeleted = await FridgeItemDB.ReduceFoodItemQuantityByOneOrDelete(fridgeId, foodItemId);
-            if (!foodItemDeleted) {
+            var foodItemAdded = await FridgeItemDB.AddFoodItemInFridgeList(fridgeId, foodItemId, quantity, purchaseDate, expectedExpiryDate);
+            if (foodItemAdded) {
                 return {
-                    message: "Item already doesn't exist in the fridge"
+                    message: "Food item added to Fridge"
                 }
             }
             return {
-                message: "Grocery item deleted"
-            };
+                message: "Food item not added"
+            }
         } catch (error) {
             throw error;
         }
