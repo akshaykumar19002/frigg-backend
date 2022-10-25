@@ -28,7 +28,7 @@ async function UpdateGroceryListByFridgeIdAndFoodItemslist(fridgeId, foodItemsLi
         });
         if (groceryList !== undefined && groceryList !== null) {
             for (let i = 0; i < groceryList.length; i++) {
-                const foodItem = foodItemsList.find(foodItem => foodItem.food_item_id === parseInt(groceryList[i].food_item_id));
+                const foodItem = foodItemsList.find(foodItem => foodItem.food_item_id === parseInt(groceryList[i].food_item_id) && foodItem.expected_expiry_days === groceryList[i].expected_expiry_days && foodItem.purchase_date === groceryList[i].purchase_date);
                 if (foodItem !== undefined && foodItem !== null) {
                     if(groceryList[i].deletedAt === null) {
                         groceryList[i].quantity = parseInt(foodItem.quantity);
@@ -43,7 +43,7 @@ async function UpdateGroceryListByFridgeIdAndFoodItemslist(fridgeId, foodItemsLi
                 }
             }
             for (let i = 0; i < foodItemsList.length; i++) {
-                const foodItem = groceryList.find(foodItem => foodItem.food_item_id === parseInt(foodItemsList[i].food_item_id));
+                const foodItem = groceryList.find(foodItem => foodItem.food_item_id === parseInt(foodItemsList[i].food_item_id) && foodItem.expected_expiry_days === foodItemsList[i].expectedExpiry_days && foodItem.purchase_date === foodItemsList[i].purchase_date);
                 if (foodItem === undefined || foodItem === null) {
                     await db.grocery_list.create({
                         fridge_id: fridgeId,
@@ -61,12 +61,12 @@ async function UpdateGroceryListByFridgeIdAndFoodItemslist(fridgeId, foodItemsLi
     };
 }
 
-async function AddFoodItemInGroceryList(fridgeId, foodItemId, quantity) {
+async function AddFoodItemInGroceryList(fridgeId, food_item_id, quantity) {
     try {
         const groceryItem = await db.grocery_list.findOne({
             where: {
                 fridge_id: fridgeId,
-                food_item_id: foodItemId
+                food_item_id: food_item_id
             },
             paranoid: false
         });

@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         // TODO: change hardcoded fridge id with dynamic value
-        const foodItem = await FridgeListServices.AddFoodItem(1, req.body.foodItemId, req.body.quantity, req.body.purchaseDate, req.body.expectedExpiryDate);
+        const foodItem = await FridgeListServices.AddFoodItem(1, req.body.food_item_id, req.body.quantity, req.body.purchase_date, req.body.expected_expiry_date);
         res.status(200).send(foodItem);
     } catch (error) {
         res.status(500).send(error.message);

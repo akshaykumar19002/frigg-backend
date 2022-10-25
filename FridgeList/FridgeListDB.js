@@ -28,7 +28,7 @@ async function UpdateFridgeListByFridgeIdAndFoodItemslist(fridgeId, foodItemsLis
         });
         if (fridgeList !== undefined && fridgeList !== null) {
             for (let i = 0; i < fridgeList.length; i++) {
-                const foodItem = foodItemsList.find(foodItem => foodItem.food_item_id === parseInt(fridgeList[i].food_item_id));
+                const foodItem = foodItemsList.find(foodItem => foodItem.food_item_id === parseInt(fridgeList[i].food_item_id) && foodItem.expectedExpiryDays === fridgeList[i].expected_expiry_days && foodItem.purchaseDate === fridgeList[i].purchase_date);
                 if (foodItem !== undefined && foodItem !== null) {
                     if(fridgeList[i].deletedAt === null) {
                         fridgeList[i].quantity = parseInt(foodItem.quantity);
@@ -43,7 +43,7 @@ async function UpdateFridgeListByFridgeIdAndFoodItemslist(fridgeId, foodItemsLis
                 }
             }
             for (let i = 0; i < foodItemsList.length; i++) {
-                const foodItem = fridgeList.find(foodItem => foodItem.food_item_id === parseInt(foodItemsList[i].food_item_id));
+                const foodItem = fridgeList.find(foodItem => foodItem.food_item_id === parseInt(foodItemsList[i].food_item_id) && foodItem.expected_expiry_days === foodItemsList[i].expectedExpiryDays && foodItem.purchase_date === foodItemsList[i].purchaseDate);
                 if (foodItem === undefined || foodItem === null) {
                     await db.fridge_list.create({
                         fridge_id: fridgeId,
