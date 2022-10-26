@@ -60,7 +60,8 @@ async function CreateOrRestoreFoodItemInFridgeList(fridgeId, foodItemId, quantit
                 food_item_id: foodItemId,
                 purchase_date: purchaseDate,
                 expected_expiry_date: expectedExpiryDate
-            }
+            },
+            paranoid: false
         });
         if (fridgeList !== undefined && fridgeList !== null) {
             await fridgeList.restore();

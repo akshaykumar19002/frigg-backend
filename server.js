@@ -29,6 +29,7 @@ app.use(passport.session());
 
 passport.use(new LocalStrategy(
   function(email, password, done) {
+    console.log('here')
     db.user.findOne({ email: email }, function (err, user) {
       if (err) { return done(err); }
       if (!user) { return done(null, false); }

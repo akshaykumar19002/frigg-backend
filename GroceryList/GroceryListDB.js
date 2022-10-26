@@ -13,7 +13,61 @@ async function GetGroceryListByFridgeId(fridgeId) {
         });
         return groceryList;
     } catch (error) {
-        console.log(error);
+        throw error;
+    };
+};
+
+async function GetGroceryListByFridgeIdAndFoodItemId(fridgeId, foodItemId) {
+    try {
+        const groceryListItem = await db.grocery_list.findOne({
+            where: {
+                fridge_id: fridgeId,
+                food_item_id: foodItemId
+            },
+            include: [{
+                model: db.food_item,
+                attributes: ['name']
+            }]
+        });
+        return groceryListItem;
+    } catch (error) {
+        throw error;
+    };
+};
+
+async function GetGroceryListByFridgeIdAndFoodItemId(fridgeId, foodItemId) {
+    try {
+        const groceryList = await db.grocery_list.findOne({
+            where: {
+                fridge_id: fridgeId,
+                food_item_id: foodItemId
+            },
+            include: [{
+                model: db.food_item,
+                attributes: ['name']
+            }]
+        });
+        return groceryList;
+    } catch (error) {
+        throw error;
+    };
+};
+
+async function GetGroceryListByFridgeIdAndFoodItemId(fridgeId, foodItemId) {
+    try {
+        const groceryList = await db.grocery_list.findOne({
+            where: {
+                fridge_id: fridgeId,
+                food_item_id: foodItemId
+            },
+            include: [{
+                model: db.food_item,
+                attributes: ['name']
+            }]
+        });
+        return groceryList;
+    } catch (error) {
+        throw error;
     };
 };
 
@@ -57,80 +111,9 @@ async function UpdateGroceryListByFridgeIdAndFoodItemslist(fridgeId, foodItemsLi
             return null;
         }
     } catch (error) {
-        console.log(error);
+        throw error;
     };
 }
-
-async function AddFoodItemInGroceryList(fridgeId, food_item_id, quantity) {
-    try {
-        const groceryItem = await db.grocery_list.findOne({
-            where: {
-                fridge_id: fridgeId,
-                food_item_id: food_item_id
-            },
-            paranoid: false
-        });
-        if (groceryItem !== undefined && groceryItem !== null) {
-            if(groceryItem.deletedAt === null) {
-                groceryItem.quantity = parseInt(groceryItem.quantity) + parseInt(quantity);
-                await groceryItem.save();
-            } else {
-                await groceryItem.restore();
-                groceryItem.quantity = parseInt(quantity);
-                await groceryItem.save();
-            }
-        } else {
-            await db.grocery_list.create({
-                fridge_id: fridgeId,
-                food_item_id: foodItemId,
-                quantity: parseInt(quantity)
-            });
-        }
-        return true;
-    } catch (error) {
-        console.log(error);
-    };
-};
-
-async function AddFoodItemInGroceryListByName(fridgeId, foodItemName, quantity) {
-    try {
-        const foodItem = await db.food_item.findOne({
-            where: {
-                name: foodItemName
-            }
-        });
-        if (foodItem !== undefined && foodItem !== null) {
-            const groceryItem = await db.grocery_list.findOne({
-                where: {
-                    fridge_id: fridgeId,
-                    food_item_id: foodItem.id
-                },
-                paranoid: false
-            });
-            if (groceryItem !== undefined && groceryItem !== null) {
-                if(groceryItem.deletedAt === null) {
-                    groceryItem.quantity = parseInt(groceryItem.quantity) + parseInt(quantity);
-                    await groceryItem.save();
-                } else {
-                    await groceryItem.restore();
-                    groceryItem.quantity = parseInt(quantity);
-                    await groceryItem.save();
-                }
-            } else {
-                await db.grocery_list.create({
-                    fridge_id: fridgeId,
-                    food_item_id: foodItem.id,
-                    quantity: parseInt(quantity)
-                });
-            }
-            return true;
-        } else {
-            return null;
-        }
-    } catch (error) {
-        console.log(error);
-    };
-};
 
 async function DeleteFoodItemInGroceryList(fridgeId, foodItemId) {
     try {
@@ -145,16 +128,62 @@ async function DeleteFoodItemInGroceryList(fridgeId, foodItemId) {
         }
         return true;
     } catch (error) {
-        console.log(error);
+        throw error;
     };
 };
 
+async function SetQuantityForGroceryList(fridgeId, foodItemId, quantity) {
+    try {
+        const groceryList = await db.grocery_list.findOne({
+            where: {
+                fridge_id: fridgeId,
+                food_item_id: foodItemId
+            }
+        });
+        if (groceryList !== undefined && groceryList !== null) {
+            groceryList.quantity = parseInt(quantity);
+            await groceryList.save();
+        }
+        else {
+            throw new Error("Grocery list not found");
+        }
+        return true;
+    } catch (error) {
+        throw error;
+    };
+};
 
+async function CreateOrRestoreFoodItemInGroceryList(fridgeId, foodItemId, quantity) {
+    try {
+        const groceryItem = await db.grocery_list.findOne({
+            where: {
+                fridge_id: fridgeId,
+                food_item_id: foodItemId
+            },
+            paranoid: false
+        });
+        if (groceryItem !== undefined && groceryItem !== null) {
+            await groceryItem.restore();
+            groceryItem.quantity = parseInt(quantity);
+            await groceryItem.save();
+        } else {
+            await db.grocery_list.create({
+                fridge_id: fridgeId,
+                food_item_id: foodItemId,
+                quantity: parseInt(quantity)
+            });
+        }
+        return true;
+    } catch (error) {
+        throw error;
+    };
+}
 
 module.exports = {
     GetGroceryListByFridgeId,
-    AddFoodItemInGroceryListByName,
     UpdateGroceryListByFridgeIdAndFoodItemslist,
-    AddFoodItemInGroceryList,
-    DeleteFoodItemInGroceryList
+    DeleteFoodItemInGroceryList,
+    GetGroceryListByFridgeIdAndFoodItemId,
+    SetQuantityForGroceryList,
+    CreateOrRestoreFoodItemInGroceryList
 }

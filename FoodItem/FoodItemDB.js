@@ -21,7 +21,7 @@ async function CreateFoodItem(name, expected_expiry_days) {
             return foodItem;
         }
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -34,7 +34,7 @@ async function DeleteFoodItem(id) {
         });
         return foodItem;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -43,7 +43,7 @@ async function GetAllFoodItems() {
         const foodItems = await db.food_item.findAll();
         return foodItems;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -52,7 +52,20 @@ async function GetFoodItemById(id) {
         const foodItem = await db.food_item.findByPk(id);
         return foodItem;
     } catch (error) {
-        console.log(error);
+        throw error;
+    }
+}
+
+async function GetFoodItemByName(name) {
+    try {
+        const foodItem = await db.food_item.findOne({
+            where: {
+                name: name
+            }
+        });
+        return foodItem;
+    } catch (error) {
+        throw error;
     }
 }
 
@@ -67,7 +80,7 @@ async function GetFoodItemsByPartialName(name) {
         });
         return foodItems;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -76,5 +89,6 @@ module.exports = {
     DeleteFoodItem,
     GetAllFoodItems,
     GetFoodItemById,
-    GetFoodItemsByPartialName
+    GetFoodItemsByPartialName,
+    GetFoodItemByName
 }
