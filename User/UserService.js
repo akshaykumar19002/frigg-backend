@@ -1,11 +1,11 @@
 const UserDB = require('./UserDB');
 
 var UserService = {
-    AddUser: async function (email, password) {
+    AddUser: async function (email, password, fullname) {
         try {
             const user = await UserDB.CheckUserExist(email);
             if (!user) {
-                var createdUser = await UserDB.CreateUser(email, password);
+                var createdUser = await UserDB.CreateUser(email, password, fullname);
                 if(createdUser) {
                     return { "message": "User created" };
                 }

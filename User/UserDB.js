@@ -1,6 +1,6 @@
 const db = require('../Config/db');
 
-async function CreateUser(email, password) {
+async function CreateUser(email, password, full_name) {
     try {
         const user = await db.user.findOne({
             where: {
@@ -15,7 +15,8 @@ async function CreateUser(email, password) {
         } else {
             const user = await db.user.create({
                 email: email,
-                password: password
+                password: password,
+                full_name: full_name
             });
             return user;
         }
@@ -42,7 +43,7 @@ async function GetAllUsers() {
         const users = await db.user.findAll();
         return users;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -51,7 +52,7 @@ async function GetUserById(id) {
         const user = await db.user.findByPk(id);
         return user;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -84,7 +85,7 @@ async function CheckUserExist(email) {
 async function UpdateUserPassword(id, password) {
     try {
         const user = await db.user.findByPk(id);
-        user.password = password;
+        user.passworsd = password;
         await user.save();
         return user;
     } catch (error) {
