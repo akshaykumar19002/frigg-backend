@@ -42,6 +42,22 @@ var GroceryService = {
             throw error;
         }
     },
+    AddFoodItemByName: async function (fridgeId, foodItemName, quantity) {
+        try {
+            var itemAdded = await FoodItemDB.AddFoodItemInGroceryListByName(fridgeId, foodItemName, quantity);
+            if (!itemAdded) {
+                return {
+                    message: "Item already exists in the grocery list"
+                }
+            } else {
+                return {
+                    message: "Item added"
+                }
+            }
+        } catch (error) {
+            throw error;
+        }
+    },
     DeleteFoodItem: async function (fridgeId, foodItemId) {
         try {
             var isDeleted = await FoodItemDB.DeleteFoodItemInGroceryList(fridgeId, foodItemId);
