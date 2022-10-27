@@ -50,7 +50,7 @@ var GroceryService = {
                 if (fridgeListItem !== undefined && fridgeListItem !== null) {
                     await FridgeListDB.SetQuantityForFridgeList(fridgeId, foodItem.id, quantity + parseInt(fridgeListItem.quantity), purchaseDate, expectedExpiryDate);
                 } else {
-                    await FridgeListDB.CreateOrRestoreFoodItemInFridgeList(fridgeId, foodItem.id, quantity + parseInt(fridgeListItem.quantity), purchaseDate, expectedExpiryDate);
+                    await FridgeListDB.CreateOrRestoreFoodItemInFridgeList(fridgeId, foodItem.id, quantity, purchaseDate, expectedExpiryDate);
                 }
             } else {
                 let newFoodItem = await FoodItemDB.CreateFoodItem(foodItemName, 7);
