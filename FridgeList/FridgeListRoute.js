@@ -22,7 +22,16 @@ router.post('/', async (req, res) => {
         res.status(500).send(error.message);
     }
 });
-
+router.post('/AddFoodItemByName', async (req, res) => {
+    try {
+        // TODO: change hardcoded fridge id with dynamic value
+        const foodItem = await FridgeListServices.AddFoodItemByName(1, req.body.food_item_name, req.body.quantity, req.body.purchase_date, req.body.expected_expiry_date);
+        res.status(200).send(foodItem);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error.message);
+    }
+});
 router.delete('/:id', async (req, res) => {
     try {
         // TODO: change hardcoded fridge id with dynamic value

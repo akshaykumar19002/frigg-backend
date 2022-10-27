@@ -18,7 +18,7 @@ async function GetFridgeListByFridgeId(fridgeId) {
 };
 async function GetFridgeListByCriteria(fridgeId, foodItemId, purchaseDate, expectedExpiryDate) {
     try {
-        const fridgeList = await db.fridge_list.findOne({
+        const fridgeItem = await db.fridge_list.findOne({
             where: {
                 fridge_id: fridgeId,
                 food_item_id: foodItemId,
@@ -30,7 +30,7 @@ async function GetFridgeListByCriteria(fridgeId, foodItemId, purchaseDate, expec
                 attributes: ['name']
             }]
         });
-        return fridgeList;
+        return fridgeItem;
     } catch (error) {
         throw error;
     };

@@ -1,4 +1,5 @@
 const FridgeListDB = require('./FridgeListDB');
+const FoodItemDB = require('../FoodItem/FoodItemDB');
 
 function DeleteProperties(response) {
     delete response.dataValues.createdAt;
@@ -36,6 +37,27 @@ var GroceryService = {
             }
             return {
                 message: "Food item added to Fridge"
+            }
+        } catch (error) {
+            throw error;
+        }
+    },
+    AddFoodItemByName: async function (fridgeId, foodItemName, quantity, purchaseDate, expectedExpiryDate) {
+        try {
+            let foodItem = await FoodItemDB.GetFoodItemByName(foodItemName);
+            if (foodItem !== undefined && foodItem !== null) {
+                let fridgeListItem = await FridgeListDB.GetFridgeListByCriteria(fridgeId, foodItem.id, purchaseDate, expectedExpiryDate);
+                if (fridgeListItem !== undefined && fridgeListItem !== null) {
+                    await FridgeListDB.SetQuantityForFridgeList(fridgeId, foodItem.id, quantity + parseInt(fridgeListItem.quantity), purchaseDate, expectedExpiryDate);
+                } else {
+                    await FridgeListDB.CreateOrRestoreFoodItemInFridgeList(fridgeId, foodItem.id, quantity + parseInt(fridgeListItem.quantity), purchaseDate, expectedExpiryDate);
+                }
+            } else {
+                let newFoodItem = await FoodItemDB.CreateFoodItem(foodItemName, 7);
+                await FridgeListDB.CreateOrRestoreFoodItemInFridgeList(fridgeId, newFoodItem.id, quantity, purchaseDate, expectedExpiryDate);
+            }
+            return {
+                message: "Item added"
             }
         } catch (error) {
             throw error;

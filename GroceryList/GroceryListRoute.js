@@ -27,7 +27,7 @@ router.post('/', async (req, res) => {
 router.post('/AddFoodItemByName', async (req, res) => {
     try {
         // TODO: change hardcoded fridge id with dynamic value
-        const foodItem = await GroceryListService.AddFoodItemByName(1, req.body.name, req.body.quantity);
+        const foodItem = await GroceryListService.AddFoodItemByName(1, req.body.food_item_name, req.body.quantity);
         res.status(200).send(foodItem);
     } catch (error) {
         console.log(error);
