@@ -52,13 +52,18 @@ var DishNameSuggestionService = {
     },
     search: async function (name) {
         try {
+            var partialSearch = await db.partialSearch(name);
             var similar = DishNameSuggestionService.findSimilarDishes(name, await db.fetchAll());
-            if (similar == undefined)
+            partialSearch = partialSearch.map( element => element.recipe_name);
+            if (partialSearch != undefined)
+                response = partialSearch.concat(similar);
+            response = [... new Set(response)];
+            if (response == undefined)
                 return []
-            else if (similar.length < 11)
-                return similar
+            else if (response.length < 11)
+                return response
             else
-                return similar.splice(0, 10);
+                return response.splice(0, 10);
         } catch (error) {
             throw error;
         }
