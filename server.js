@@ -20,6 +20,7 @@ const GroceryListRouter = require('./GroceryList/GroceryListRoute');
 const FridgeRouter = require('./Fridge/FridgeRoute');
 const FridgeListRouter = require('./FridgeList/FridgeListRoute');
 const UserRouter = require('./User/UserRoute');
+const DishNameSuggestionRouter = require('./DishNameSuggestion/DishNameSuggestionRoute');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -56,6 +57,7 @@ router.use('/GroceryList', GroceryListRouter);
 router.use('/Fridge', FridgeRouter);
 router.use('/FridgeList', FridgeListRouter);
 router.use('/User', UserRouter);
+router.use('/DishNameSuggestion', DishNameSuggestionRouter)
 
 db.sequelize.sync()
   .then(() => {
