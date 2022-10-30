@@ -57,7 +57,7 @@ var DishNameSuggestionService = {
             partialSearch = partialSearch.map( element => element.recipe_name);
             if (partialSearch != undefined)
                 response = partialSearch.concat(similar);
-            response = [... new Set(response)];
+            response = response.filter((item, i, ar) => ar.indexOf(item) === i);
             if (response == undefined)
                 return []
             else if (response.length < 11)
