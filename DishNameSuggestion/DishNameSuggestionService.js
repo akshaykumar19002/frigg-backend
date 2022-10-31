@@ -67,6 +67,15 @@ var DishNameSuggestionService = {
         } catch (error) {
             throw error;
         }
+    },
+
+    fetchAllDishes: async function () {
+        try {
+            var dishes = await db.fetchAll();
+            return dishes.map((item) => item.recipe_name)
+        } catch (error) {
+            throw error;
+        }
     }
 };
 

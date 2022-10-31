@@ -3,8 +3,8 @@ const db = require('../Config/db');
 
 async function getIngredients(dishName) {
     try {
-        const ingredients = await db.recipe_lists.findOne({
-            attributes: ['ingredients'],
+        var ingredients = await db.recipe_lists.findOne({
+            attributes: ['ingredients', 'type'],
             where: {
                 recipe_name: dishName.toLowerCase()
             }
