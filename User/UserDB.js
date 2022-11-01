@@ -1,27 +1,16 @@
 const db = require('../Config/db');
 
-async function CreateUser(email, password, full_name) {
+async function CreateUser(email, password, full_name, invite_code) {
     try {
-        const user = await db.user.findOne({
-            where: {
-                email: email
-            },
-            paranoid: false,
+        const user = await db.user.create({
+            email: email,
+            password: password,
+            full_name: full_name,
+            invite_code: invite_code
         });
-        if (user) {
-            user.restore();
-            await user.save();
-            return user;
-        } else {
-            const user = await db.user.create({
-                email: email,
-                password: password,
-                full_name: full_name
-            });
-            return user;
-        }
+        return user;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -34,7 +23,7 @@ async function DeleteUser(id) {
         });
         return user;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -65,11 +54,11 @@ async function AuthenticateUser(token) {
         });
         return user;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
-async function CheckUserExist(email) {
+async function getUserByEmailId(email) {
     try {
         const user = await db.user.findOne({
             where: {
@@ -78,7 +67,7 @@ async function CheckUserExist(email) {
         });
         return user;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -89,7 +78,55 @@ async function UpdateUserPassword(id, password) {
         await user.save();
         return user;
     } catch (error) {
-        console.log(error);
+        throw error;
+    }
+}
+
+async function isUserDeleted(email) {
+    try {
+        console.log(email);
+        const user = await db.user.findOne({
+            where: {
+                email: email
+            },
+            paranoid: false,
+        });
+        console.log(user)
+        if (user !== null && user.deleted_at !== null) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function restoreUser(email) {
+    try {
+        const user = await db.user.findOne({
+            where: {
+                email: email
+            },
+            paranoid: false,
+        });
+        await user.restore();
+        return user;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function GetUserByInviteCode(invite_code) {
+    try {
+        const user = await db.user.findOne({
+            where: {
+                invite_code: invite_code
+            }
+        });
+        return user;
+    } catch (error) {
+        throw error;
     }
 }
 
@@ -99,6 +136,9 @@ module.exports = {
     GetAllUsers,
     GetUserById,
     AuthenticateUser,
-    CheckUserExist,
-    UpdateUserPassword
+    getUserByEmailId,
+    UpdateUserPassword,
+    isUserDeleted,
+    restoreUser,
+    GetUserByInviteCode,
 }

@@ -23,16 +23,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
+        invite_code: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            unique: true
+        },
         
     }, {
         paranoid: true,
         underscored: true
-    }, {
-        instanceMethods: {
-            verifyPassword: function(password) {
-                return bcrypt.compareSync(password, this.password);
-            }
-        }
     });
     User.beforeCreate((user, options) => {
         return bcrypt.hash(user.password, 10)
@@ -43,6 +42,9 @@ module.exports = (sequelize, DataTypes) => {
                 throw new Error();
             });
     });
+    User.prototype.verifyPassword = function (password) {
+        return bcrypt.compare(password, this.password);
+    };
 
 
     return User;

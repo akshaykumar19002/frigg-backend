@@ -1,25 +1,12 @@
 const db = require('../Config/db');
+const FridgeUserDB = require('../FridgeUser/FridgeUserDB');
 
-async function CreateFridge(name) {
+async function CreateFridge(userId) {
     try {
-        const fridge = await db.fridge.findOne({
-            where: {
-                name: name
-            },
-            paranoid: false,
-        });
-        if (fridge) {
-            fridge.restore();
-            await fridge.save();
-            return fridge;
-        } else {
-            const fridge = await db.fridge.create({
-                name: name
-            });
-            return fridge;
-        }
+        const fridge = await db.fridge.create({});
+        return fridge;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -32,7 +19,7 @@ async function DeleteFridge(id) {
         });
         return fridge;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -41,7 +28,7 @@ async function GetAllFridges() {
         const fridges = await db.fridge.findAll();
         return fridges;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -54,7 +41,7 @@ async function GetFridgeById(id) {
         });
         return fridge;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 

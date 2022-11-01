@@ -1,11 +1,10 @@
 const FridgeDB = require('./FridgeDB');
 
 var FridgeService = {
-    CreateFridge: async function (name) {
+    CreateFridge: async function (id) {
         try {
-            var response = await FridgeDB.CreateFridge(name);
-            this.DeleteProperties(response);
-            return response;
+            var fridge = await FridgeDB.CreateFridge(id);
+            return fridge;
         } catch (error) {
             throw error;
         }

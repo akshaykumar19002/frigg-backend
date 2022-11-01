@@ -1,5 +1,6 @@
 const GroceryListDB = require('./GroceryListDB');
 const FoodItemDB = require('../FoodItem/FoodItemDB');
+const FoodItemService = require('../FoodItem/FoodItemService');
 
 function DeleteProperties(response) {
     delete response.dataValues.createdAt;
@@ -94,7 +95,27 @@ var GroceryService = {
                 for (let i = 0; i < foodItemsToBeAdded.length; i++) {
                     const foodItemFoundInDB = groceryListFromDB.find(foodItem => foodItem.food_item_id === parseInt(foodItemsToBeAdded[i].food_item_id) && foodItem.expected_expiry_days === foodItemsToBeAdded[i].expectedExpiry_days && foodItem.purchase_date === foodItemsToBeAdded[i].purchase_date);
                     if (foodItemFoundInDB === undefined || foodItemFoundInDB === null) {
-                        await GroceryListDB.CreateOrRestoreFoodItemInGroceryList(fridgeId, foodItemsToBeAdded[i].food_item_id, parseInt(foodItemsToBeAdded[i].quantity));
+                        // TODO: add items by name in food_item table if it doesn't exist'
+                        // if food_item_id exist in input list then store in grocerylist
+                        if(foodItemsToBeAdded[i].food_item_id) {
+                            await GroceryListDB.CreateOrRestoreFoodItemInGroceryList(fridgeId, foodItemsToBeAdded[i].food_item_id, parseInt(foodItemsToBeAdded[i].quantity));
+                        } else {
+                            // check if each item name exist in food item list.
+                            let foodItem = await FoodItemService.GetFoodItemByName(foodItemsToBeAdded[i].food_item_name);
+
+                            // if it does then get it's id and create grocerylist 
+                            console.log('here');
+                            console.log(foodItem);
+                            if(foodItem) await GroceryListDB.CreateOrRestoreFoodItemInGroceryList(fridgeId, foodItem.id, parseInt(foodItemsToBeAdded[i].quantity));
+                            else {
+                                // else create item in food_item table then store in grocerylist
+                                let newFoodItem = await FoodItemService.AddFoodItem(foodItemsToBeAdded[i].food_item_name, 7);
+                                console.log(newFoodItem);
+                                await GroceryListDB.CreateOrRestoreFoodItemInGroceryList(fridgeId, newFoodItem.id, foodItemsToBeAdded[i].quantity);
+                            }
+
+                        }
+
                     }
                 }
                 return true;

@@ -3,8 +3,7 @@ var app = express();
 var router = express.Router();
 var bodyParser = require('body-parser');
 var passport = require('passport');
-var session = require('express-session');
-var LocalStrategy = require('passport-local').Strategy;
+var localStrategy = require('passport-local').Strategy;
 
 const db = require('./Config/db');
 var port = process.env.PORT || 3000;
@@ -23,31 +22,22 @@ const UserRouter = require('./User/UserRoute');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
-app.use(passport.session());
 
-passport.use(new LocalStrategy(
-  function(email, password, done) {
+passport.use(new localStrategy({usernameField: 'email'},
+  async function(email, password, done) {
     console.log('here')
-    db.user.findOne({ email: email }, function (err, user) {
-      if (err) { return done(err); }
+    try {
+      const user = await db.user.findOne({ email: email });
+      console.log(user);
       if (!user) { return done(null, false); }
       if (!user.verifyPassword(password)) { return done(null, false); }
-      return done(null, user);
-    });
+      return done(null, user); 
+    } catch (err) {
+      return done(err);
+    }
   }
 ));
-
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  db.user.findById(id, function(err, user) {
-    done(err, user);
-  });
-});
 
 app.use('/', router);
 

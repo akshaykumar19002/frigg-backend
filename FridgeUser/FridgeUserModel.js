@@ -8,10 +8,12 @@ module.exports = (sequelize, DataTypes) => {
         fridge_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            unique: 'compositeIndex'
         },
         user_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            unique: 'compositeIndex'
         }
     }, {
         paranoid: true,

@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const UserService = require('./UserService');
 const passport = require('passport');
+
+const UserService = require('./UserService');
+const FridgeUserService = require('../FridgeUser/FridgeUserService');
 
 router.get('/', async (req, res) => {
     try {
@@ -19,7 +21,7 @@ router.get('/', async (req, res) => {
 // TODO: add code to upload image to s3.
 router.post('/', async (req, res) => {
     try {
-        const response = await UserService.AddUser(req.body.email, req.body.password, req.body.full_name);
+        const response = await UserService.AddUser(req.body.email, req.body.password, req.body.full_name, req.body.invite_code);
         res.status(200).send(response);
     } catch (error) {
         res.status(500).send(error.message);
@@ -52,9 +54,10 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
+router.post('/login', passport.authenticate('local', {session: false}), async (req, res) => {
     console.log('here');
-    res.status(200).send({message: 'Logged in'});
+    let fridgeId = await FridgeUserService.GetFridgeIdByUserId(req.user.id);
+    res.status(200).send({message: 'Logged in', fridge_id: fridgeId});
 });
 
 module.exports = router;

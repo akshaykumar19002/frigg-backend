@@ -55,6 +55,14 @@ var FoodItemService = {
             throw error;
         }
     },
+    GetFoodItemByName: async function (name) {
+        try {
+            var response = await FoodItemDB.GetFoodItemByName(name);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
     DeleteProperties: function (response) {
         delete response.dataValues.createdAt;
         delete response.dataValues.updatedAt;
