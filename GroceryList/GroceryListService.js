@@ -104,13 +104,10 @@ var GroceryService = {
                             let foodItem = await FoodItemService.GetFoodItemByName(foodItemsToBeAdded[i].food_item_name);
 
                             // if it does then get it's id and create grocerylist 
-                            console.log('here');
-                            console.log(foodItem);
                             if(foodItem) await GroceryListDB.CreateOrRestoreFoodItemInGroceryList(fridgeId, foodItem.id, parseInt(foodItemsToBeAdded[i].quantity));
                             else {
                                 // else create item in food_item table then store in grocerylist
                                 let newFoodItem = await FoodItemService.AddFoodItem(foodItemsToBeAdded[i].food_item_name, 7);
-                                console.log(newFoodItem);
                                 await GroceryListDB.CreateOrRestoreFoodItemInGroceryList(fridgeId, newFoodItem.id, foodItemsToBeAdded[i].quantity);
                             }
 

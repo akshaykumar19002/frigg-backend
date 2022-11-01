@@ -7,22 +7,17 @@ var UserService = {
         try {
             const user = await UserDB.getUserByEmailId(email);
             if (!user) {
-                console.log("user not found");
                 if(await UserDB.isUserDeleted(email)) {
-                    console.log("user deleted")
                     await UserDB.restoreUser(email);
                 }
                 else {
-                    console.log("creating user");
                     await UserDB.CreateUser(email, password, fullname, invite_code);
                 }
 
 
                 let invitingUser = UserDB.GetUserByInviteCode(invite_code);
-                let newUser = UserDB.getUserByEmailId(email)
-
+                let newUser = await UserDB.getUserByEmailId(email)
                 if(invite_code && invitingUser) {
-                    console.log("using invite code");
                     if(!invitingUser) {
                         // get fridge id by inviting user
                         let fridgeId = FridgeUserService.GetFridgeIdByUserId(invitingUser.id);
@@ -31,10 +26,9 @@ var UserService = {
                     }
                 }
                 else {
-                    console.log("without invite_code");
                     // create fridge.
                     let fridge = await FridgeService.CreateFridge(newUser.id);
-                    FridgeUserService.AssociateUserAndFridge(fridge.id, userId);
+                    FridgeUserService.AssociateUserAndFridge(fridge.id, newUser.id);
                 }
 
 

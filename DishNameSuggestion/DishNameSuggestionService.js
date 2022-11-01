@@ -43,7 +43,6 @@ var DishNameSuggestionService = {
         }
         var items = Object.keys(dish_similarity).map(
             (key) => { 
-                // console.log(dish_similarity[key])
                 return [key, dish_similarity[key]] });
         
         items.sort((first, second) => { return first[1] - second[1] } );

@@ -15,7 +15,6 @@ var GroceryService = {
                     message: "No item in fridge list"
                 }
             }
-            console.log(fridgeList.length);
             fridgeList.forEach(groceryListItem => {
                 DeleteProperties(groceryListItem);
                 groceryListItem.dataValues.food_item_name = groceryListItem.dataValues.food_item.name;
@@ -70,7 +69,6 @@ var GroceryService = {
                 const dbFoodItemFoundInInputList = foodItemsToBeAdded.find(foodItem => foodItem.food_item_id === parseInt(fridgeItemsFromDB[i].food_item_id) && foodItem.expected_expiry_date === fridgeItemsFromDB[i].expected_expiry_date && foodItem.purchase_date === fridgeItemsFromDB[i].purchase_date);
                 if (dbFoodItemFoundInInputList === undefined || dbFoodItemFoundInInputList === null) {
                     // item not found in the list should be deleted.
-                    console.log(fridgeId, fridgeItemsFromDB[i].food_item_id, fridgeItemsFromDB[i].quantity, fridgeItemsFromDB[i].purchase_date, fridgeItemsFromDB[i].expected_expiry_date)
                     await FridgeListDB.DeleteFoodItemFromFridgeList(fridgeId, fridgeItemsFromDB[i].food_item_id, fridgeItemsFromDB[i].purchase_date, fridgeItemsFromDB[i].expected_expiry_date);
                 }
                 else 

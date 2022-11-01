@@ -27,7 +27,7 @@ var FridgeUserService = {
             if (!fridge) {
                 throw new Error("Fridge not found");
             }
-            return fridge.fridge_id;
+            return fridge.id;
         } catch (error) {
             throw error;
         }

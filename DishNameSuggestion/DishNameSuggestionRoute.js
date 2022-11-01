@@ -4,7 +4,6 @@ const service = require('./DishNameSuggestionService');
 
 router.get('/:name', async (req, res) => {
     try {
-        console.log('testing');
         const foodItem = await service.search(req.params.name);
         res.status(200).send(foodItem);
     } catch (error) {
@@ -18,7 +17,6 @@ router.get('/:name', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        console.log('testing');
         const foodItem = await service.fetchAllDishes();
         res.status(200).send(foodItem);
     } catch (error) {

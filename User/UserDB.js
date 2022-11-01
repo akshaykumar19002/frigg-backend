@@ -84,14 +84,12 @@ async function UpdateUserPassword(id, password) {
 
 async function isUserDeleted(email) {
     try {
-        console.log(email);
         const user = await db.user.findOne({
             where: {
                 email: email
             },
             paranoid: false,
         });
-        console.log(user)
         if (user !== null && user.deleted_at !== null) {
             return true;
         } else {
