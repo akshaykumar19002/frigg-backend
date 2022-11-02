@@ -95,7 +95,7 @@ var GroceryService = {
                         } else {
                             await GroceryListDB.SetQuantityForGroceryList(fridgeId, groceryListFromDB[i].food_item_id, dBFoodItemFoundInInputList.quantity);
                         }
-                    } else {
+                    } else if(!appendQuantity) {
                         await GroceryListDB.DeleteFoodItemInGroceryList(fridgeId, groceryListFromDB[i].food_item_id);
                     }
                 }
