@@ -12,7 +12,8 @@ const config = {
     password,
     database,
     host,
-    dialect
+    dialect,
+    logging: false
   },
   test: {
     username,

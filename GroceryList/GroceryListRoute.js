@@ -61,4 +61,20 @@ router.post('/UpdateGroceryList', async (req, res) => {
     }
 });
 
+router.post('/AddGroceryList', async (req, res) => {
+    try {
+        // TODO: change hardcoded fridge id with dynamic value
+        // TODO: pass 2nd argument according to fooditems list
+        const foodItemList = req.body;
+        const groceryUpdated = await GroceryListService.AddGroceryListByFoodItemsList(1, foodItemList);
+        if (groceryUpdated) {
+            res.status(200).send({message: 'Grocery list updated successfully'});
+        } else {
+            res.status(500).send({message: 'Grocery list update failed'});
+        }
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
 module.exports = router;

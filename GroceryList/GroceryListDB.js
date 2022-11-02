@@ -141,7 +141,7 @@ async function SetQuantityForGroceryList(fridgeId, foodItemId, quantity) {
             }
         });
         if (groceryList !== undefined && groceryList !== null) {
-            groceryList.quantity = parseInt(quantity);
+            groceryList.quantity = ''+quantity+'';
             await groceryList.save();
         }
         else {

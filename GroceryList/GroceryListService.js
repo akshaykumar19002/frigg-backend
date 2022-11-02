@@ -1,6 +1,7 @@
 const GroceryListDB = require('./GroceryListDB');
 const FoodItemDB = require('../FoodItem/FoodItemDB');
 const FoodItemService = require('../FoodItem/FoodItemService');
+const { parse } = require('dotenv');
 
 function DeleteProperties(response) {
     delete response.dataValues.createdAt;
@@ -79,21 +80,27 @@ var GroceryService = {
             throw error;
         }
     },
-    UpdateGroceryListByFoodItemslist: async function (fridgeId, foodItemsToBeAdded) {
+    UpdateGroceryListByFoodItemslist: async function (fridgeId, foodItemsToBeAdded, appendQuantity = false) {
         try {
             const groceryListFromDB = await GroceryListDB.GetGroceryListByFridgeId(fridgeId);
 
             if (groceryListFromDB !== undefined && groceryListFromDB !== null) {
+
                 for (let i = 0; i < groceryListFromDB.length; i++) {
-                    const dBFoodItemFoundInInputList = foodItemsToBeAdded.find(foodItem => foodItem.food_item_id === parseInt(groceryListFromDB[i].food_item_id) && foodItem.expected_expiry_days === groceryListFromDB[i].expected_expiry_days && foodItem.purchase_date === groceryListFromDB[i].purchase_date);
+                    const dBFoodItemFoundInInputList = foodItemsToBeAdded.find(foodItem => foodItem.food_item_id === parseInt(groceryListFromDB[i].food_item_id) || foodItem.food_item_name == groceryListFromDB[i].dataValues.food_item.name);
                     if (dBFoodItemFoundInInputList !== undefined && dBFoodItemFoundInInputList !== null) {
-                        await GroceryListDB.SetQuantityForGroceryList(fridgeId, groceryListFromDB[i].food_item_id, dBFoodItemFoundInInputList.quantity)
+                        if(appendQuantity) {
+                            let newQuantity = dBFoodItemFoundInInputList.quantity + parseInt(groceryListFromDB[i].quantity);
+                            await GroceryListDB.SetQuantityForGroceryList(fridgeId, groceryListFromDB[i].food_item_id, newQuantity);
+                        } else {
+                            await GroceryListDB.SetQuantityForGroceryList(fridgeId, groceryListFromDB[i].food_item_id, dBFoodItemFoundInInputList.quantity);
+                        }
                     } else {
                         await GroceryListDB.DeleteFoodItemInGroceryList(fridgeId, groceryListFromDB[i].food_item_id);
                     }
                 }
                 for (let i = 0; i < foodItemsToBeAdded.length; i++) {
-                    const foodItemFoundInDB = groceryListFromDB.find(foodItem => foodItem.food_item_id === parseInt(foodItemsToBeAdded[i].food_item_id) && foodItem.expected_expiry_days === foodItemsToBeAdded[i].expectedExpiry_days && foodItem.purchase_date === foodItemsToBeAdded[i].purchase_date);
+                    const foodItemFoundInDB = groceryListFromDB.find(foodItem => (foodItem.food_item_id === parseInt(foodItemsToBeAdded[i].food_item_id) || foodItem.dataValues.food_item.name == foodItemsToBeAdded[i].food_item_name));
                     if (foodItemFoundInDB === undefined || foodItemFoundInDB === null) {
                         // TODO: add items by name in food_item table if it doesn't exist'
                         // if food_item_id exist in input list then store in grocerylist
@@ -122,6 +129,10 @@ var GroceryService = {
         } catch (error) {
             throw error;
         }
+    },
+    AddGroceryListByFoodItemsList: async function (fridgeId, foodItemsToBeAdded) {
+        console.log('here');
+        return this.UpdateGroceryListByFoodItemslist(fridgeId, foodItemsToBeAdded, true);
     }
 };
 
