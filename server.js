@@ -30,7 +30,7 @@ app.use(passport.initialize());
 passport.use(new localStrategy({usernameField: 'email'},
   async function(email, password, done) {
     try {
-      const user = await db.user.findOne({ email: email });
+      const user = await db.user.findOne({ where: {email: email}});
       if (!user) { return done(null, false); }
       if (!(await user.verifyPassword(password))) { 
         return done(null, false);
