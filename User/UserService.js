@@ -1,6 +1,7 @@
 const UserDB = require('./UserDB');
 const FridgeService = require('../Fridge/FridgeService');
 const FridgeUserService = require('../FridgeUser/FridgeUserService');
+const Common = require('../Common/common');
 
 var UserService = {
     AddUser: async function (email, password, fullname, invite_code) {
@@ -11,25 +12,20 @@ var UserService = {
                     await UserDB.restoreUser(email);
                 }
                 else {
-                    await UserDB.CreateUser(email, password, fullname, invite_code);
+                    await UserDB.CreateUser(email, password, fullname);
                 }
 
 
-                let invitingUser = UserDB.GetUserByInviteCode(invite_code);
+                var fridge = !Common.isNullorUndefined(invite_code) ? await FridgeService.GetFridgeIdByInviteCode(invite_code) : null;
+
                 let newUser = await UserDB.getUserByEmailId(email)
-                if(invite_code && invitingUser) {
-                    if(!invitingUser) {
-                        // get fridge id by inviting user
-                        let fridgeId = FridgeUserService.GetFridgeIdByUserId(invitingUser.id);
-                        // associate new user and fridge
-                        FridgeUserService.AssociateUserAndFridge(fridgeId, newUser.id);
-                    }
+                
+                if(!fridge || !invite_code) {
+                    fridge = await FridgeService.CreateFridge(newUser.id);
                 }
-                else {
-                    // create fridge.
-                    let fridge = await FridgeService.CreateFridge(newUser.id);
-                    FridgeUserService.AssociateUserAndFridge(fridge.id, newUser.id);
-                }
+                
+                // associate new user and fridge
+                await FridgeUserService.AssociateUserAndFridge(fridge.id, newUser.id);
 
 
 

@@ -32,6 +32,9 @@ var FridgeUserService = {
             throw error;
         }
     },
+    GetUserIdByFridgeInviteCode: async function (invite_code) {
+        return await FridgeUserDB.getUserIdByFridgeKey(invite_code);
+    },
     DeleteProperties: function (response) {
         delete response.dataValues.createdAt;
         delete response.dataValues.updatedAt;

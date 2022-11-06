@@ -1,12 +1,11 @@
 const db = require('../Config/db');
 
-async function CreateUser(email, password, full_name, invite_code) {
+async function CreateUser(email, password, full_name) {
     try {
         const user = await db.user.create({
             email: email,
             password: password,
             full_name: full_name,
-            invite_code: invite_code
         });
         return user;
     } catch (error) {

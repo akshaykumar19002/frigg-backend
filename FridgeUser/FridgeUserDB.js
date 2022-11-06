@@ -47,9 +47,26 @@ getFridgeByUserId = async (user_id) => {
     }
 };
 
+getUserIdByFridgeKey = async (fridgeKey) => {
+    try {
+        return await db.fridge.findOne({ 
+            include: [{
+                model: db.fridge_user,
+                attributes: ['user_id']
+            }],
+            where: {
+                fridgeKey
+            }
+        });
+    } catch (err) {
+        throw err;
+    }
+};
+
 module.exports = {
     createFridgeUser,
     getUsersByFridgeId,
     deleteFridgeUser,
-    getFridgeByUserId
+    getFridgeByUserId,
+    getUserIdByFridgeKey
 };

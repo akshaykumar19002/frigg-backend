@@ -1,6 +1,7 @@
 const db = require('../Config/db');
 const FridgeUserDB = require('../FridgeUser/FridgeUserDB');
 
+
 async function CreateFridge(userId) {
     try {
         const fridge = await db.fridge.create({});
@@ -45,9 +46,23 @@ async function GetFridgeById(id) {
     }
 }
 
+async function GetFridgeIdByFridgeKey(fridgeKey) {
+    try {
+        const fridge = await db.fridge.findOne({
+            where: {
+                fridgeKey: fridgeKey
+            }
+        });
+        return fridge;
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     CreateFridge,
     DeleteFridge,
     GetAllFridges,
-    GetFridgeById
+    GetFridgeById,
+    GetFridgeIdByFridgeKey
 }

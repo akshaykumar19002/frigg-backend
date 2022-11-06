@@ -1,5 +1,6 @@
 const FridgeListDB = require('./FridgeListDB');
 const FoodItemDB = require('../FoodItem/FoodItemDB');
+const Common = require('../Common/common');
 
 function DeleteProperties(response) {
     delete response.dataValues.createdAt;
@@ -65,31 +66,36 @@ var GroceryService = {
     UpdateFridgeListByFoodItemslist: async function (fridgeId, foodItemsToBeAdded) {
         try {
             let fridgeItemsFromDB = await FridgeListDB.GetFridgeListByFridgeId(fridgeId);
-            for (let i = 0; i < fridgeItemsFromDB.length; i++) {
-                const dbFoodItemFoundInInputList = foodItemsToBeAdded.find(foodItem => foodItem.food_item_id === parseInt(fridgeItemsFromDB[i].food_item_id) && foodItem.expected_expiry_date === fridgeItemsFromDB[i].expected_expiry_date && foodItem.purchase_date === fridgeItemsFromDB[i].purchase_date);
-                if (dbFoodItemFoundInInputList === undefined || dbFoodItemFoundInInputList === null) {
-                    // item not found in the list should be deleted.
-                    await FridgeListDB.DeleteFoodItemFromFridgeList(fridgeId, fridgeItemsFromDB[i].food_item_id, fridgeItemsFromDB[i].purchase_date, fridgeItemsFromDB[i].expected_expiry_date);
+
+            if (!Common.isNullorUndefined(fridgeItemsFromDB)) {
+
+                for (let i = 0; i < fridgeItemsFromDB.length; i++) {
+                    const dBFoodItemFoundInInputList = foodItemsToBeAdded.find(foodItem => foodItem.food_item_id === parseInt(fridgeItemsFromDB[i].food_item_id) && foodItem.expected_expiry_date === fridgeItemsFromDB[i].expected_expiry_date && foodItem.purchase_date === fridgeItemsFromDB[i].purchase_date);
+
+                    if (!Common.isNullorUndefined(dBFoodItemFoundInInputList)) {
+                        let newQuantity = dBFoodItemFoundInInputList.quantity;
+                        let purchaseDate = fridgeItemsFromDB[i].purchase_date;
+                        let expectedExpiryDate = fridgeItemsFromDB[i].expected_expiry_date;
+                        await FridgeListDB.UpdateFridgeListQuantityByCriteria(fridgeId, fridgeItemsFromDB[i].food_item_id, newQuantity, purchaseDate, expectedExpiryDate);
+                    } else  {
+                        await FridgeListDB.DeleteFoodItemFromFridgeList(fridgeId, fridgeItemsFromDB[i].food_item_id, fridgeItemsFromDB[i].purchase_date, fridgeItemsFromDB[i].expected_expiry_date);
+                    }
                 }
-                else 
-                {
-                    // update new quantity
-                    await FridgeListDB.UpdateFridgeListQuantityByCriteria(fridgeId, fridgeItemsFromDB[i].food_item_id, fridgeItemsFromDB[i].quantity, fridgeItemsFromDB[i].purchase_date, fridgeItemsFromDB[i].expected_expiry_date);
+                for (let i = 0; i < foodItemsToBeAdded.length; i++) {
+                    const foodItemFoundInDB = fridgeItemsFromDB.find(foodItem => foodItem.food_item_id === parseInt(foodItemsToBeAdded[i].food_item_id) && foodItem.expected_expiry_date === foodItemsToBeAdded[i].expected_expiry_date && foodItem.purchase_date === foodItemsToBeAdded[i].purchase_date);
+
+                    if (Common.isNullorUndefined(foodItemFoundInDB)) {
+                        await FridgeListDB.CreateOrRestoreFoodItemInFridgeList(fridgeId, foodItemsToBeAdded[i].food_item_id, foodItemsToBeAdded[i].quantity, foodItemsToBeAdded[i].purchase_date, foodItemsToBeAdded[i].expected_expiry_date);
+                    }
                 }
+                return true;
+            } else {
+                return null;
             }
-            for (let i = 0; i < foodItemsToBeAdded.length; i++) {
-                const foodItemFoundInDB = fridgeItemsFromDB.find(foodItem => foodItem.food_item_id === parseInt(foodItemsToBeAdded[i].food_item_id) && foodItem.expected_expiry_date === foodItemsToBeAdded[i].expected_expiry_date && foodItem.purchase_date === foodItemsToBeAdded[i].purchase_date);
-                if (foodItemFoundInDB === undefined || foodItemFoundInDB === null) {
-                    await FridgeListDB.CreateOrRestoreFoodItemInFridgeList(fridgeId, foodItemsToBeAdded[i].food_item_id, foodItemsToBeAdded[i].quantity, foodItemsToBeAdded[i].purchase_date, foodItemsToBeAdded[i].expected_expiry_date);
-                }
-            }
-            return true;
         } catch (error) {
-            console.log(error)
             throw error;
         }
     }
-
 };
 
 

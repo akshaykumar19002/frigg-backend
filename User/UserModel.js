@@ -22,13 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         token: {
             type: DataTypes.STRING,
             allowNull: true
-        },
-        invite_code: {
-            type: DataTypes.STRING,
-            allowNull: true,
-            unique: true
-        },
-        
+        }        
     }, {
         paranoid: true,
         underscored: true
