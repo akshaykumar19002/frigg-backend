@@ -19,6 +19,7 @@ const GroceryListRouter = require('./GroceryList/GroceryListRoute');
 const FridgeRouter = require('./Fridge/FridgeRoute');
 const FridgeListRouter = require('./FridgeList/FridgeListRoute');
 const UserRouter = require('./User/UserRoute');
+const FridgeUserRouter = require('./FridgeUser/FridgeUserRoute');
 const DishNameSuggestionRouter = require('./DishNameSuggestion/DishNameSuggestionRoute');
 const GenerateGroceryListRouter = require('./GenerateGroceryList/GenerateGroceryListRoute');
 
@@ -31,7 +32,9 @@ passport.use(new localStrategy({usernameField: 'email'},
     try {
       const user = await db.user.findOne({ email: email });
       if (!user) { return done(null, false); }
-      if (!user.verifyPassword(password)) { return done(null, false); }
+      if (!(await user.verifyPassword(password))) { 
+        return done(null, false);
+      }
       return done(null, user); 
     } catch (err) {
       return done(err);
@@ -41,11 +44,12 @@ passport.use(new localStrategy({usernameField: 'email'},
 
 app.use('/', router);
 
+router.use('/User', UserRouter);
 router.use('/FoodItem', FoodItemRouter);
 router.use('/GroceryList', GroceryListRouter);
 router.use('/Fridge', FridgeRouter);
+router.use('/FridgeUser', FridgeUserRouter);
 router.use('/FridgeList', FridgeListRouter);
-router.use('/User', UserRouter);
 router.use('/DishNameSuggestion', DishNameSuggestionRouter)
 router.use('/GenerateGroceryList', GenerateGroceryListRouter);
 
@@ -58,3 +62,8 @@ db.sequelize.sync()
   .catch((err) => {
     console.log(err);
   })
+
+
+
+
+  // TODO: check user login, able to login with any password

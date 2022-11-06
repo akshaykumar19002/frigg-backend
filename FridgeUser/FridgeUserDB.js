@@ -16,7 +16,11 @@ getUsersByFridgeId = async (fridge_id) => {
         return await db.fridge_user.findAll({
             where: {
                 fridge_id
-            }
+            },
+            include: [{
+                model: db.user,
+                attributes: ['email', 'full_name', 'id']
+            }]
         });
     } catch (err) {
         throw err;
@@ -35,7 +39,7 @@ deleteFridgeUser = async (fridge_id, user_id) => {
         throw err;
     }
 };
-getFridgeByUserId = async (user_id) => {
+getFridgeUserByUserId = async (user_id) => {
     try {
         return await db.fridge_user.findOne({
             where: {
@@ -67,6 +71,6 @@ module.exports = {
     createFridgeUser,
     getUsersByFridgeId,
     deleteFridgeUser,
-    getFridgeByUserId,
+    getFridgeUserByUserId,
     getUserIdByFridgeKey
 };

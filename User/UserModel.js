@@ -36,10 +36,8 @@ module.exports = (sequelize, DataTypes) => {
                 throw new Error();
             });
     });
-    User.prototype.verifyPassword = function (password) {
-        return bcrypt.compare(password, this.password);
+    User.prototype.verifyPassword = async function (password) {
+        return await bcrypt.compare(password, this.password);
     };
-
-
     return User;
 };

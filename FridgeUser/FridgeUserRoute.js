@@ -4,9 +4,9 @@ const FridgeUserService = require('./FridgeUserService');
 
 
 
-router.get('/GetUsersByFridgeId', async (req, res) => {
+router.get('/GetUsersByFridgeId/:id', async (req, res) => {
     try {
-        const fridges = await FridgeUserService.GetUsersByFridgeId(req.body.fridge_id);
+        const fridges = await FridgeUserService.GetUsersByFridgeId(req.params.id);
         res.status(200).send(fridges);
     } catch (error) {
         res.status(500).send(error.message);
