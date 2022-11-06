@@ -62,8 +62,3 @@ db.sequelize.sync()
   .catch((err) => {
     console.log(err);
   })
-
-
-
-
-  // TODO: check user login, able to login with any password

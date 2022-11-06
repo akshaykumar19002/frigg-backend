@@ -3,10 +3,10 @@ const router = express.Router();
 const FridgeListServices = require('./FridgeListService');
 
 
-router.get('/', async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         // TODO: change hardcoded fridge id with dynamic value
-        const foodItems = await FridgeListServices.GetAllFridgeListByFridgeId(1);
+        const foodItems = await FridgeListServices.GetAllFridgeListByFridgeId(req.params.id);
         res.status(200).send(foodItems);
     } catch (error) {
         res.status(500).send(error.message);
