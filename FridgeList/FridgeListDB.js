@@ -9,7 +9,10 @@ async function GetFridgeListByFridgeId(fridgeId) {
             include: [{
                 model: db.food_item,
                 attributes: ['name']
-            }]
+            }],
+            order: [
+                ['expected_expiry_date', 'ASC']
+            ]
         });
         return fridgeList;
     } catch (error) {
