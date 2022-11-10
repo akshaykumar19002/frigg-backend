@@ -26,7 +26,7 @@ async function GetFoodItemsInRecipe(fridgeId) {
                 }
             });
             if (recipe.length > 0) {
-                recipeList.push(fridgeList[i]);
+                recipeList.push({food_item_name: fridgeList[i].food_item.name, food_item_expiryDate: fridgeList[i].expected_expiry_date});
             };
         };
         return recipeList;
