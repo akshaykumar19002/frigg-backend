@@ -1,0 +1,23 @@
+pipeline {
+    agent node1
+    stages {
+        stage('Building from src') {
+            steps {
+                script{
+                    sh"""
+                    javac -d target -cp target:junit-platform-console-standalone-2.0.0.jar src/TrignometricTest.java
+                    """
+                }
+            }
+        }
+        stage('Testing state') {
+            steps {
+                sh"""
+                java -jar junit-platform-console-standalone-2.0.0.jar --class-path target --select-class TrignometricTest
+                """
+            }
+        }
+        stage('Pushing to Artifactory'){
+        }
+    }
+}

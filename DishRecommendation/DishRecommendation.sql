@@ -1,1 +1,0 @@
-let sql = "SELECT distinct(fi.name) FROM frigg.fridge_lists as fl inner join frigg.food_items as fi on fl.food_item_id = fi.id where fridge_id = 1"
