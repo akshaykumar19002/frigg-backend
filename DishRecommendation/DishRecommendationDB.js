@@ -3,7 +3,9 @@ const sequelize = require('sequelize');
 
 async function GetFoodItemsInFridge(fridgeId) {
     try {
-        let sql = "SELECT distinct(fi.name) FROM frigg.fridge_lists as fl inner join frigg.food_items as fi on fl.food_item_id = fi.id where fridge_id = " + fridgeId;
+        //TODO: data kyu ni ara...
+        //TODO: expiry date sorting
+        let sql = "SELECT distinct(fi.name) FROM frigg.fridge_lists as fl inner join frigg.food_items as fi on fl.food_item_id = fi.id where fridge_id = " + fridgeId + " and fl.expected_expiry_date <= DATE_ADD(CURDATE(), INTERVAL 2 DAY)";
         let food_names = await db.sequelize.query(sql, {
             type: sequelize.QueryTypes.SELECT
         });
@@ -11,7 +13,7 @@ async function GetFoodItemsInFridge(fridgeId) {
         let recepie_list_names = [];
         for (let i = 0; i < food_names.length; i++) {
             const element = food_names[i];
-            let sql2 = "select * from recipe_lists where ingredients like '%" + element.name + "%'";
+            let sql2 = "select * from recipe_lists where ingredients like '%" + element.name.trim() + "%'";
             let recepie_list = await db.sequelize.query(sql2, {
                 type: sequelize.QueryTypes.SELECT
             });

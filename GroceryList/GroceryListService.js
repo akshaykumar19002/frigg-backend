@@ -131,7 +131,6 @@ var GroceryService = {
         }
     },
     AddGroceryListByFoodItemsList: async function (fridgeId, foodItemsToBeAdded) {
-        console.log('here');
         return this.UpdateGroceryListByFoodItemslist(fridgeId, foodItemsToBeAdded, true);
     }
 };
