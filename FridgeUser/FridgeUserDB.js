@@ -67,10 +67,29 @@ getUserIdByFridgeKey = async (fridgeKey) => {
     }
 };
 
+
+updateFridgeIdByUserId = async (fridge_id, user_id) => {
+    try {
+        return await db.fridge_user.update({
+            fridge_id
+        }, {
+            where: {
+                user_id
+            }
+        });
+    } catch (err) {
+        throw err;
+    }
+};
+
+
+
+
 module.exports = {
     createFridgeUser,
     getUsersByFridgeId,
     deleteFridgeUser,
     getFridgeUserByUserId,
-    getUserIdByFridgeKey
+    getUserIdByFridgeKey,
+    updateFridgeIdByUserId,
 };
