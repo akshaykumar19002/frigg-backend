@@ -57,7 +57,7 @@ router.get('/:id', async (req, res) => {
 router.post('/login', passport.authenticate('local', {session: false}), async (req, res) => {
     let fridge = await FridgeUserService.GetFridgeByUserId(req.user.id);
     let user = await UserService.GetUserById(req.user.id);
-    res.status(200).send({message: 'Logged in', fridge_id: fridge.id, invite_code: fridge.fridgeKey, email: user.email, full_name: user.full_name});
+    res.status(200).send({message: 'Logged in', fridge_id: fridge.id, user_id: req.user.id, invite_code: fridge.fridgeKey, email: user.email, full_name: user.full_name});
 });
 
 
