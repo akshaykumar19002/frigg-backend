@@ -13,4 +13,13 @@ router.get('/GetUsersByFridgeId/:id', async (req, res) => {
     }
 });
 
+router.post('/mergeUserAndFridge', async (req, res) => {
+    try {
+        const fridges = await FridgeUserService.MergeUserAndFridge(req.body.user_id, req.body.invite_code);
+        res.status(200).send(fridges);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
 module.exports = router;
