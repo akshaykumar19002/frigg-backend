@@ -3,8 +3,6 @@ const sequelize = require('sequelize');
 
 async function GetFoodItemsInFridge(fridgeId) {
     try {
-        //TODO: data kyu ni ara...
-        //TODO: expiry date sorting
         let sql = "SELECT distinct(fi.name) FROM frigg.fridge_lists as fl inner join frigg.food_items as fi on fl.food_item_id = fi.id where fridge_id = " + fridgeId + " and fl.expected_expiry_date <= DATE_ADD(CURDATE(), INTERVAL 2 DAY)";
         let food_names = await db.sequelize.query(sql, {
             type: sequelize.QueryTypes.SELECT
