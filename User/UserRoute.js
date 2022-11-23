@@ -59,4 +59,22 @@ router.post('/login', passport.authenticate('local', {session: false}), async (r
     res.status(200).send({message: 'Logged in', fridge_id: fridge.id, invite_code: fridge.fridgeKey});
 });
 
+router.post('/preferences/:id/:noOfNotifications', async (req, res) => {
+    try {
+        const response = await UserService.AddPreferences(req.params.id, req.params.noOfNotifications);
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+router.get('/preferences/:id/', async (req, res) => {
+    try {
+        const response = await UserService.GetPreferences(req.params.id);
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
 module.exports = router;

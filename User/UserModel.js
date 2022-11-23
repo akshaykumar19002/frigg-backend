@@ -22,7 +22,11 @@ module.exports = (sequelize, DataTypes) => {
         token: {
             type: DataTypes.STRING,
             allowNull: true
-        }        
+        },
+        no_of_notifications: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        }  
     }, {
         paranoid: true,
         underscored: true

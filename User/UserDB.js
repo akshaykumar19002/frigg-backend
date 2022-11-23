@@ -127,6 +127,17 @@ async function GetUserByInviteCode(invite_code) {
     }
 }
 
+async function AddPreferences(id, no_of_notifications) {
+    try {
+        const user = await db.user.findByPk(id);
+        user.no_of_notifications = no_of_notifications;
+        await user.save();
+        return user;
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     CreateUser,
     DeleteUser,
@@ -138,4 +149,5 @@ module.exports = {
     isUserDeleted,
     restoreUser,
     GetUserByInviteCode,
+    AddPreferences
 }

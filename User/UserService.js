@@ -77,6 +77,22 @@ var UserService = {
         delete response.dataValues.deletedAt;
         delete response.dataValues.password;
         delete response.dataValues.token;
+    },
+    AddPreferences: async function (id, no_of_notifications) {
+        await UserDB.AddPreferences(id, no_of_notifications);
+        return { "message": "Preferences updated successfully" };
+    },    
+    GetPreferences: async function (id) {
+        try {
+            var user = await UserDB.GetUserById(id);
+            if (!user) {
+                throw new Error("User not found");
+            }
+            this.DeleteProperties(user);
+            return user;
+        } catch (error) {
+            throw error;
+        }
     }
 };
 
