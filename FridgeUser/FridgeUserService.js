@@ -57,6 +57,10 @@ var FridgeUserService = {
             throw error;
         }
     },
+    MergeUserAndFridge: async function(user_id, invite_code) {
+            let fridgeId = await FridgeService.GetFridgeIdByInviteCode(invite_code);
+            await FridgeUserDB.updateFridgeIdByUserId(fridgeId.id, user_id);
+        },
     DeleteProperties: function (response) {
         delete response.dataValues.createdAt;
         delete response.dataValues.updatedAt;
