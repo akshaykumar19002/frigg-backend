@@ -59,7 +59,11 @@ var FridgeUserService = {
     },
     MergeUserAndFridge: async function(user_id, invite_code) {
             let fridgeId = await FridgeService.GetFridgeIdByInviteCode(invite_code);
-            await FridgeUserDB.updateFridgeIdByUserId(fridgeId.id, user_id);
+            if(fridgeId) {
+                await FridgeUserDB.updateFridgeIdByUserId(fridgeId.id, user_id);
+            } else {
+                throw new Error("Invalid invite code");
+            }
         },
     DeleteProperties: function (response) {
         delete response.dataValues.createdAt;
