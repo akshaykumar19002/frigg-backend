@@ -2,6 +2,7 @@ const UserDB = require('./UserDB');
 const FridgeService = require('../Fridge/FridgeService');
 const FridgeUserService = require('../FridgeUser/FridgeUserService');
 const Common = require('../Common/common');
+const bcrypt = require('bcrypt');
 
 var UserService = {
     AddUser: async function (email, password, fullname, invite_code) {
@@ -90,6 +91,32 @@ var UserService = {
             }
             this.DeleteProperties(user);
             return user;
+        } catch (error) {
+            throw error;
+        }
+    },
+    ChangePassword: async function (id, oldPassword, newPassword, confirmPassword) {
+        try {
+            oldPassword = oldPassword.trim();
+            newPassword = newPassword.trim();
+            confirmPassword = confirmPassword.trim();
+
+            if(oldPassword == "" || newPassword == "" || confirmPassword == "") {
+                throw new Error("field cannot be empty");
+            }
+
+            var user = await UserDB.GetUserById(id);
+            if (!user) {
+                throw new Error("User not found");
+            }
+            if(!bcrypt.compareSync(oldPassword, user.password)) {
+                throw new Error("Old password is incorrect");
+            }
+            if(newPassword != confirmPassword) {
+                throw new Error("New password and confirm password does not match");
+            }
+            await UserDB.ChangePassword(id, newPassword);
+            return { "message": "Password changed successfully" };
         } catch (error) {
             throw error;
         }
