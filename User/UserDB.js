@@ -1,4 +1,5 @@
 const db = require('../Config/db');
+const bcrypt = require('bcrypt');
 
 async function CreateUser(email, password, full_name) {
     try {
@@ -138,6 +139,19 @@ async function AddPreferences(id, no_of_notifications) {
     }
 }
 
+
+async function ChangePassword(id, newPassword) {
+    try {
+        const user = await db.user.findByPk(id);
+        user.password = await bcrypt.hash(newPassword, 10);
+        await user.save();
+        return user;
+    } catch (error) {
+        throw error;
+    }
+}
+
+
 module.exports = {
     CreateUser,
     DeleteUser,
@@ -149,5 +163,6 @@ module.exports = {
     isUserDeleted,
     restoreUser,
     GetUserByInviteCode,
-    AddPreferences
+    AddPreferences,
+    ChangePassword
 }
