@@ -79,4 +79,14 @@ router.get('/preferences/:id/', async (req, res) => {
     }
 });
 
+
+router.post('/changePassword', async (req, res) => {
+    try {
+        const response = await UserService.ChangePassword(req.body.user_id, req.body.old_password, req.body.new_password, req.body.confirm_password);
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
 module.exports = router;
