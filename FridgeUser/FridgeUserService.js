@@ -62,7 +62,7 @@ var FridgeUserService = {
             if(fridgeId) {
                 await FridgeUserDB.updateFridgeIdByUserId(fridgeId.id, user_id);
             } else {
-                throw new Error("Invalid invite code");
+                return { message: "Invalid invite code"}
             }
         },
     DeleteProperties: function (response) {
