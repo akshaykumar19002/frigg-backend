@@ -61,7 +61,7 @@ var FridgeUserService = {
             let fridgeId = await FridgeService.GetFridgeIdByInviteCode(invite_code);
             if(fridgeId) {
                 await FridgeUserDB.updateFridgeIdByUserId(fridgeId.id, user_id);
-                return { fridge_id: fridgeId };
+                return { fridge_id: fridgeId.id };
             } else {
                 return { message: "Invalid invite code"}
             }
