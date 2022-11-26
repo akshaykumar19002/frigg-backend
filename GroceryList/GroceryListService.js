@@ -51,7 +51,7 @@ var GroceryService = {
                 if (groceryItem !== undefined && groceryItem !== null) {
                     await GroceryListDB.SetQuantityForGroceryList(fridgeId, foodItem.id, quantity + parseInt(groceryItem.quantity));
                 } else {
-                    await GroceryListDB.CreateOrRestoreFoodItemInGroceryList(fridgeId, foodItem.id, quantity + parseInt(groceryItem.quantity));
+                    await GroceryListDB.CreateOrRestoreFoodItemInGroceryList(fridgeId, foodItem.id, quantity);
                 }
             } else {
                 let newFoodItem = await FoodItemDB.CreateFoodItem(foodItemName, 7);
