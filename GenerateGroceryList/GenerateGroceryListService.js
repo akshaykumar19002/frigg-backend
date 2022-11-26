@@ -3,6 +3,7 @@ const db = require('./GenerateGroceryListDB');
 
 var DishNameSuggestionService = {
     separateIngredients: async function (fridge_id, ingredients, directions) {
+        ingredients = ingredients.map((item) => item.trim().toLowerCase())
         var fridge_items = await db.isIngredientInFridgeList(fridge_id, ingredients);
         var grocery_list = ingredients.filter((item) => {
             return !fridge_items.includes(item)
