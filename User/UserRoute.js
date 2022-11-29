@@ -18,11 +18,14 @@ router.get('/', async (req, res) => {
     }
 });
 
-// TODO: add code to upload image to s3.
 router.post('/', async (req, res) => {
     try {
-        const response = await UserService.AddUser(req.body.email, req.body.password, req.body.full_name, req.body.invite_code);
-        res.status(200).send(response);
+        if (req.body.email.trim() && req.body.password.trim() && req.body.full_name.trim()) {
+            const response = await UserService.AddUser(req.body.email.trim(), req.body.password.trim(), req.body.full_name.trim(), req.body.invite_code);
+            res.status(200).send(response);
+        } else {
+            res.status(400).send({message: 'Missing parameters'});
+        }
     } catch (error) {
         res.status(500).send(error.message);
     }
