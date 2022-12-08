@@ -4,7 +4,7 @@ const DishRecommendationDB = require('./DishRecommendationDB');
 
 router.get('/:fridge_id', async (req, res) => {
     try {
-        let names = await DishRecommendationDB.GetFoodItemsInFridge(req.params.fridge_id);
+        let names = await DishRecommendationService.GetFoodItemsInFridge(req.params.fridge_id);
         res.status(200).send(names);
     } catch (error) {
         if (error.message === 'Dish not found') {
@@ -16,3 +16,4 @@ router.get('/:fridge_id', async (req, res) => {
 });
 
 module.exports = router;
+
